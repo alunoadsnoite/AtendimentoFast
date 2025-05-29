@@ -1,0 +1,198 @@
+{%load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <!-- Google Fonts: Poppins e League Spartan -->
+<link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+   
+  <title>Página Login - AtendimentoFast</title>
+</head> 
+
+<body>
+<div class="container-login">
+  <div class="left">
+    <img src="{% static 'img/imagem_tela_inicial.png' %}" alt="Imagem de atendimento" style="position: fixed; left: 0; width: 35%; height: auto; bottom: 0; transform: scaleX(-1);">
+  </div>
+  <div class="right">
+    <h1 class="logo">AtendimentoFast</h1>
+    <h2>Bem-vindo de volta</h2>
+    <p class="subtitle">Faça login para continuar</p>
+
+    <form>
+      <input type="email" placeholder="Digite seu e-mail" required>
+      <div class="senha-wrapper">
+  <input type="password" id="senha" placeholder="Digite sua senha" required>
+  <i class="fa-solid fa-eye toggle-password" onclick="togglePassword('senha', this)"></i>
+</div>
+     
+     <a href="{% url 'pagina_inicial_cliente' %}" class="botao">Entrar cliente</a>
+     <a href="{% url 'pagina_inicial_adm' %}" class="botao">Entrar adm</a>
+    
+     
+    </form>
+
+    <p class="signup">Não tem uma conta? <a href="{% url 'cadastro' %}">Faça o seu cadastro</a></p>
+  </div>
+</div>
+
+
+
+<style>
+  body {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(to right, #A1D8B5 0%, #B0B0B0 50%, #A1D8B5 100%);
+  }
+
+  .container-login {
+    display: flex;
+    height: 100vh;
+  }
+
+  .left {
+    flex: 1;
+  }
+
+  .left img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transform: scaleX(-1);
+  }
+
+  .right {
+    flex: 1;
+    background: transparent;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 40px;
+  }
+
+  .logo {
+    font-family: 'League Spartan', sans-serif;
+    font-size: 28px;
+    color: #1E392A;
+    position: fixed;
+    top: 20px;
+    right: 50px;
+    margin-bottom: 0px;
+  }
+
+  h2 {
+    font-size: 28px;
+    color: #1E392A;
+    margin: 0;
+  }
+
+  .subtitle {
+    font-size: 14px;
+    color: #ffffff;
+    margin: -5px 0 30px;
+  }
+
+  form {
+    width: 100%;
+    max-width: 400px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  input {
+    padding: 12px 20px;
+    margin: 10px 0;
+    border: none;
+    border-radius: 50px;
+    background-color: #f0f0f0;
+    font-size: 16px;
+    color: #333;
+  }
+
+  .senha-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.senha-wrapper input {
+  width: 100%;
+  padding-right: 40px; /* espaço para o ícone */
+}
+
+.toggle-password {
+  position: absolute;
+  right: 10px;
+  cursor: pointer;
+  font-size: 18px;
+}
+
+  .botao {
+      display: inline-block;
+      padding: 12px 30px;
+      background-color: #1E392A;
+      color: #fff;
+      text-align: center;
+      font-weight: bold;
+      text-decoration: none;
+      border-radius: 30px;
+      font-size: 16px;
+      transition: background-color 0.3s ease;
+      margin-top: 30px;
+    }
+
+    .botao:hover {
+      background-color: #327c66;
+    }
+
+  .signup {
+    margin-top: 20px;
+    font-size: 14px;
+    color: #555;
+  }
+
+  .signup a {
+    color: #198754;
+    text-decoration: none;
+  }
+
+  .signup a:hover {
+    text-decoration: underline;
+  }
+
+  @media (max-width: 900px) {
+    .container-login {
+      flex-direction: column;
+    }
+
+    .left {
+      height: 200px;
+    }
+
+    .left img {
+      height: 100%;
+      transform: none;
+      border-radius: 10px;
+    }
+
+    .right {
+      padding: 20px;
+    }
+
+    .logo {
+      font-size: 24px;
+      text-align: center;
+    }
+  }
+</style>
+
+
+
+<script src="{% static 'js/login.js' %}"></script>
+
+
+</body>
+</html>

@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Buscar Cliente</title>
+</head>
+<body>
+  <aside class="menu-lateral">
+    <a href="{% url 'pagina_inicial_adm' %}" class="logo">AtendimentoFast</a>
+    <nav>
+      <a href="{% url 'verificar_cadastro' %}">Agendar atendimento</a>
+      <a href="{% url 'cadastrar_cliente_adm' %}">Cadastrar cliente</a>
+      <a href="{% url 'fila_atendimento_adm' %}">Fila de espera</a>
+      <a href="{% url 'cadastrar_servicos_adm' %}">Cadastrar serviços</a>
+      <a href="{% url 'servicos_cadastrado' %}">Serviços</a>
+      <a href="{% url 'horario_atendimento' %}">Horário de atendimento</a>
+      <a href="{% url 'agenda_adm' %}">Agenda de atendimento</a>
+      <a href="{% url 'buscar_cliente' %}" class="ativo">Buscar cliente</a>
+      <a href="{% url 'encaixa_fila_adm' %}">Encaixar na fila</a>
+      <a href="{% url 'perfil_adm' %}">Perfil</a>
+      <a href="{% url 'inicio' %}">Sair</a>
+    </nav>
+  </aside>
+
+  <div class="conteudo">
+    <h2>Buscar Cliente</h2>
+    <form action="{% url 'buscar_cliente' %}" method="get" class="form-busca">
+      <input type="text" name="query" placeholder="Digite o nome, CPF ou e-mail do cliente..." required>
+      <button type="submit">Buscar</button>
+    </form>
+
+    <div class="tabela-clientes">
+      <h3>Resultados da busca:</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Nome</th>
+            <th>CPF</th>
+            <th>Email</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+       <tbody>
+  {% if clientes %}
+    {% for cliente in clientes %}
+      <tr>
+        <td>{{ cliente.nome_completo }}</td>
+        <td>{{ cliente.cpf|default:"-" }}</td>
+        <td>{{ cliente.email }}</td>
+        <td>
+          <a href="{% url 'dados_cliente_adm' cliente.id %}">Ver</a> |
+          <a href="{% url 'agendar_atendimento_adm' cliente.id %}">Agendar</a>
+        </td>
+      </tr>
+    {% endfor %}
+  {% else %}
+    <tr>
+      <td colspan="4">Nenhum cliente encontrado.</td>
+    </tr>
+  {% endif %}
+</tbody>
+      </table>
+    </div>
+  </div>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      display: flex;
+      background: #f0f0f0;
+    }
+
+    .menu-lateral {
+      background: #ffffff;
+      width: 220px;
+      padding: 20px 15px;
+      box-shadow: 4px 0 10px rgba(0,0,0,0.1);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100vh;
+    }
+
+    .menu-lateral .logo {
+      font-size: 18px;
+      color: #1E392A;
+      margin-bottom: 20px;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .menu-lateral nav a {
+      display: block;
+      color: #1E392A;
+      padding: 8px 10px;
+      border-radius: 6px;
+      margin-bottom: 6px;
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 14px;
+      transition: 0.3s;
+    }
+
+    .menu-lateral nav a:hover,
+    .menu-lateral nav a.ativo {
+      background: #A1D8B5;
+      color: #ffffff;
+    }
+
+    .conteudo {
+      margin-left: 240px;
+      padding: 40px 30px;
+      width: 100%;
+    }
+
+    .conteudo h2 {
+      font-size: 24px;
+      color: #1E392A;
+      margin-bottom: 20px;
+    }
+
+    .form-busca {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      max-width: 600px;
+      margin-bottom: 30px;
+    }
+
+    .form-busca input {
+      flex: 1;
+      padding: 12px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+
+    .form-busca button {
+      padding: 12px 20px;
+      background: #1E392A;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .form-busca button:hover {
+      background: #3e7f65;
+    }
+
+    .tabela-clientes h3 {
+      margin-bottom: 10px;
+      color: #1E392A;
+    }
+
+    .tabela-clientes table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    .tabela-clientes th, .tabela-clientes td {
+      padding: 12px;
+      text-align: left;
+      border-bottom: 1px solid #eee;
+      font-size: 14px;
+    }
+
+    .tabela-clientes th {
+      background-color: #A1D8B5;
+      color: white;
+    }
+
+    .tabela-clientes a {
+      color: #1E392A;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .tabela-clientes a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 768px) {
+      .menu-lateral {
+        position: relative;
+        width: 100%;
+        height: auto;
+      }
+
+      .conteudo {
+        margin-left: 0;
+        padding: 20px;
+      }
+
+      .form-busca {
+        flex-direction: column;
+      }
+    }
+  </style>
+</body>
+</html>

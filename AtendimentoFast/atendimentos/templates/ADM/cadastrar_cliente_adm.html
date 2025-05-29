@@ -1,0 +1,312 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link href="https://fonts.googleapis.com/css2?family=League+Spartan&family=Poppins&display=swap" rel="stylesheet" />
+  
+  
+  <title>Cadastro de Cliente</title>
+</head>
+<body>
+  <aside class="menu-lateral">
+    <a href="{% url 'pagina_inicial_cliente' %}" class="logo">AtendimentoFast</a>
+    <nav>
+      <a href="{% url 'verificar_cadastro' %}">Agendar atendimento</a>
+      <a href="{% url 'cadastrar_cliente_adm' %}" class="ativo">Cadastrar cliente</a>
+      <a href="{% url 'fila_atendimento_adm' %}">Fila de espera</a>
+      <a href="{% url 'cadastrar_servicos_adm' %}">Cadastrar serviços</a>
+      <a href="{% url 'servicos_cadastrado' %}">Serviços</a>
+      <a href="{% url 'horario_atendimento' %}">Horário de atendimento</a>
+      <a href="{% url 'agenda_adm' %}">Agenda de atendimento</a>
+      <a href="{% url 'buscar_cliente' %}">Buscar cliente</a>
+      <a href="{% url 'encaixa_fila_adm' %}">Encaixar na fila</a>
+      <a href="{% url 'perfil_adm' %}">Perfil</a>
+      <a href="{% url 'inicio' %}">Sair</a>
+    </nav>
+  </aside>
+
+  <main class="container-cadastro">
+
+    {% if messages %}
+    <ul class="messages">
+    {% for message in messages %}
+    <li class="{{ message.tags }}">{{ message }}</li>
+    {% endfor %}
+   </ul>
+{% endif %}
+
+    <h1 class="titulo">Cadastrar cliente</h1>
+    <p class="subtitulo">Preencha com os dados do cliente</p>
+
+    <form id="form-cadastro" class="forms-wrapper" method="POST">
+  {% csrf_token %}
+  <div class="lado-esquerdo">
+    <label for="nome">Nome completo</label>
+    <input type="text" id="nome" name="nome_completo" placeholder="Digite o nome completo" required />
+
+    <label for="email">Email</label>
+    <input type="email" id="email" name="email" placeholder="exemplo@email.com" required />
+
+    <label for="cpf">CPF</label>
+    <input type="text" id="cpf" name="cpf" placeholder="000.000.000-00" required>
+
+    <label for="cep">CEP</label>
+    <input type="text" id="cep" name="cep" placeholder="00000-000" required>
+  </div>
+
+  <div class="lado-direito">
+    <label for="nascimento">Data de nascimento</label>
+    <input type="date" id="nascimento" name="data_nascimento" required>
+
+    <label for="telefone">Telefone</label>
+    <input type="tel" id="telefone" name="telefone" placeholder="(00) 9 0000-0000" required>
+
+    <label for="endereco">Endereço</label>
+    <input type="text" id="endereco" name="endereco" placeholder="Rua Exemplo, 123" required>
+
+    <button type="submit" class="botao" id="btnCadastrar">Cadastrar Cliente</button>
+    <p class="link">Quer ver se o cliente possui cadastro? <a href="{% url 'buscar_cliente' %}">Clique aqui</a></p>
+  </div>
+ </form>
+  </main>
+
+{% if cpf_existente %}
+<div class="modal" id="modalCpfExistente" style="display: block;">
+  <div class="modal-conteudo">
+    <p>Já existe um cliente cadastrado com este CPF.</p>
+    <div class="modal-botoes">
+      <a href="{% url 'pagina_inicial_adm' %}" class="btn">Buscar Cliente</a>
+    </div>
+  </div>
+</div>
+{% endif %}
+
+{% if cliente_id  and request.GET.novo %}
+<input type="hidden" id="cliente-cadastrado">
+{% endif %}
+
+{% if novo %}
+<div class="modal" id="modalClienteCadastrado" style="display: block;">
+  <div class="modal-conteudo">
+    <p>Cliente cadastrado com sucesso! Senha padrão: 1234567</p>
+    <div class="modal-botoes">
+      {% if cliente_id %}
+      <a href="{% url 'agendar_atendimento_adm' cliente_id %}" class="btn">Agendar Atendimento</a>
+      {% endif %}
+      <a href="{% url 'pagina_inicial_adm' %}" class="btn">Ok</a>
+    </div>
+  </div>
+</div>
+{% endif %}
+
+
+  <style>
+
+     
+body {
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(to right, #A1D8B5 0%, #B0B0B0 50%, #A1D8B5 100%);
+}
+
+.menu-lateral {
+  background: #ffffff;
+  width: 220px;
+  padding: 20px 15px;
+  box-shadow: 4px 0 10px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+}
+
+.menu-lateral .logo {
+  font-size: 18px;
+  color: #1E392A;
+  margin-bottom: 20px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.menu-lateral nav a {
+  display: block;
+  color: #1E392A;
+  padding: 8px 10px;
+  border-radius: 6px;
+  margin-bottom: 6px;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 14px;
+  transition: 0.3s;
+}
+
+.menu-lateral nav a:hover,
+.menu-lateral nav a.ativo {
+  background: #A1D8B5;
+  color: #ffffff;
+}
+
+.container-cadastro {
+  margin-left: 240px;
+  padding: 40px 30px;
+}
+
+.titulo {
+  font-family: 'League Spartan', sans-serif;
+  font-size: 28px;
+  color: #1E392A;
+  text-align: center;
+  margin-bottom: 5px;
+}
+
+.subtitulo {
+  font-size: 16px;
+  color: #333;
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.forms-wrapper {
+  display: flex;
+  gap: 40px;
+  justify-content: center;
+}
+
+.lado-esquerdo,
+.lado-direito {
+  flex: 1;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+}
+
+label {
+  margin-bottom: 8px;
+  color: #333;
+  font-weight: 600;
+}
+
+input {
+  padding: 12px 15px;
+  font-size: 16px;
+  border: none;
+  border-radius: 50px;
+  background-color: #f0f0f0;
+  color: #333;
+  margin-bottom: 20px;
+  height: 44px;
+  box-sizing: border-box;
+  outline: none;
+  transition: box-shadow 0.3s ease;
+}
+
+input:focus {
+  box-shadow: 0 0 5px #A1D8B5;
+}
+
+.botao {
+  padding: 14px 0;
+  background-color: #1E392A;
+  color: white;
+  font-weight: 700;
+  font-size: 16px;
+  border-radius: 30px;
+  border: none;
+  cursor: pointer;
+  margin-top: 32px;
+  transition: background-color 0.3s ease;
+}
+
+.botao:hover {
+  background-color: #327c66;
+}
+
+.link{
+    margin-top: 10px;
+    font-size: 14px;
+    color: #555;
+  }
+  .link a {
+    color: #198754;
+    text-decoration: none;
+  }
+
+  .link a:hover {
+    text-decoration: underline;
+  }
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-conteudo {
+  background: white;
+  padding: 30px;
+  border-radius: 10px;
+  text-align: center;
+}
+
+.modal-botoes {
+  margin-top: 20px;
+}
+
+.modal-botoes .btn {
+  margin: 0 10px;
+  padding: 10px 20px;
+  background: #1E392A;
+  color: white;
+  text-decoration: none;
+  border-radius: 5px;
+}
+
+
+
+/* RESPONSIVIDADE */
+
+@media (max-width: 768px) {
+  .menu-lateral {
+    position: static;
+    width: 100%;
+    height: auto;
+    flex-direction: row;
+    justify-content: space-around;
+  }
+
+  .container-cadastro {
+    margin-left: 0;
+    padding: 20px;
+  }
+
+  .forms-wrapper {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .lado-esquerdo,
+  .lado-direito {
+    max-width: 100%;
+  }
+
+  .botao {
+    margin-top: 20px;
+  }
+}
+  </style>
+
+<script src="{% static 'js/cadastro_cliente_adm.js' %}"></script>  
+
+</body>
+</html>

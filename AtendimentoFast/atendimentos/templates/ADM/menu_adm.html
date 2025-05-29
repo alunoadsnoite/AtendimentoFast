@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Menu Cliente</title>
+</head>
+<body>
+  <aside class="menu-lateral">
+    <a href="{% url 'pagina_inicial_adm' %}" class="logo">AtendimentoFast</a>
+    <nav>
+      <a href="{% url 'verificar_cadastro' %}">Agendar atendimento</a>
+      <a href="{% url 'cadastrar_cliente_adm' %}">Cadastrar cliente</a>
+      <a href="{% url 'fila_atendimento_adm' %}">Fila de espera</a>
+      <a href="{% url 'cadastrar_servicos_adm' %}">Cadastrar serviços</a>
+      <a href="{% url 'servicos_cadastrado' %}">Serviços</a>
+      <a href="{% url 'horario_atendimento' %}">Horário de atendimento</a>
+      <a href="{% url 'agenda_adm' %}">Agenda de atendimento</a>
+      <a href="{% url 'buscar_cliente' %}">Buscar cliente</a>
+      <a href="{% url 'encaixa_fila_adm' %}">Encaixar na fila</a>
+      <a href="{% url 'perfil_adm' %}">Perfil</a>
+      <a href="{% url 'inicio' %}">Sair</a>
+    </nav>
+  </aside>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .menu-lateral {
+      background: #ffffff;
+      width: 220px;
+      padding: 20px 15px;
+      box-shadow: 4px 0 10px rgba(0,0,0,0.1);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100vh;
+    }
+
+    .menu-lateral .logo {
+      font-size: 18px;
+      color: #1E392A;
+      margin-bottom: 20px;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .menu-lateral nav a {
+      display: block;
+      color: #1E392A;
+      padding: 8px 10px;
+      border-radius: 6px;
+      margin-bottom: 6px;
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 14px;
+      transition: 0.3s;
+    }
+
+    .menu-lateral nav a:hover,
+    .menu-lateral nav a.ativo {
+      background: #A1D8B5;
+      color: #ffffff;
+    }
+
+  </style>
+</body>
+</html>

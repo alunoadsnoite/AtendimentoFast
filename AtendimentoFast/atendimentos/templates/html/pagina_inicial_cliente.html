@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Área do Cliente</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+
+  </head>
+
+<body>
+  <div class="container">
+    <h1 class="logo">AtendimentoFast</h1>
+    <h1>Bem-vindo, Cliente!</h1>
+    <p>Gerencie seus atendimentos com facilidade</p>
+
+    <div class="grid-botoes">
+  <a href="{% url 'perfil_cliente' %}" class="botao">Perfil</a>
+  <a href="{% url 'fila_cliente' %}" class="botao">Fila de espera</a>
+  <a href="{% url 'agendamentos_cliente' %}" class="botao">Meus agendamentos</a>
+  <a href="{% url 'agendar_atendimento' %}" class="botao">Agendar atendimento</a>
+  <a href="{% url 'inicio' %}" class="botao">Sair</a>
+</div>
+  
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background: linear-gradient(to right, #A1D8B5 0%, #B0B0B0 50%, #A1D8B5 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+    }
+
+    .container {
+      background: #ffffff;
+      padding: 40px 30px;
+      border-radius: 20px;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+      max-width: 600px;
+      width: 100%;
+      text-align: center;
+    }
+
+    .logo {
+    font-family: 'League Spartan', sans-serif;
+    font-size: 28px;
+    color: #1E392A;
+    position: fixed;
+    top: 20px;
+    right: 50px;
+    margin-bottom: 0px;
+     text-decoration: none;
+  }
+
+
+    h1 {
+      font-size: 24px;
+      color: #1E392A;
+      margin-bottom: 10px;
+    }
+
+    p {
+      color: #333;
+      margin-bottom: 30px;
+    }
+
+    .grid-botoes {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 20px;
+}
+
+.grid-botoes .botao {
+  background: linear-gradient(135deg, #5FA885, #3E7F65);
+  border: none;
+  color: white;
+  font-size: 14px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  text-decoration: none;
+  aspect-ratio: 1 / 1; /* Garante formato quadrado */
+  min-width: 100px;
+}
+
+
+    @media (max-width: 480px) {
+      .grid-botoes {
+        grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+      }
+    }
+  </style>
+</body>
+</html>

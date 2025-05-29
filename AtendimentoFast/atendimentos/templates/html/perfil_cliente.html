@@ -1,0 +1,244 @@
+{%load static %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Meu Perfil</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet" />
+
+</head>
+<body>
+  <aside class="menu-lateral">
+    <a href="{% url 'pagina_inicial_cliente' %}" class="logo">AtendimentoFast</a>
+    <nav>
+      <a href="{% url 'agendar_atendimento' %}">Agendar atendimento</a>
+      <a href="{% url 'agendamentos_cliente' %}">Meus agendamentos</a>
+      <a href="{% url 'fila_cliente' %}">Fila de espera</a>
+      <a href="{% url 'perfil_cliente' %}" class="ativo">Perfil</a>
+      <a href="{% url 'inicio' %}">Sair</a>
+    </nav>
+  </aside>
+
+  <main class="conteudo">
+    <h1 class="titulo">Meu Perfil</h1>
+
+    <section class="perfil-box">
+      <p class="campo">Nome completo</p>
+      <p class="campo">(00) 90000-0000</p>
+      <p class="campo">emaildocliente@gmail.com</p>
+      <p class="campo">**** <span class="ver-senha" onclick="abrirModal()">Visualizar senha</span></p>
+      <p id="senhaReal" class="campo" style="display: none;">senha1234</p>  
+    </section>
+
+    <div class="botoes">
+      <a href="{% url 'editar_cliente' %}" class="botao">Editar</a>
+    </div>
+  </main>
+
+    <div id="modalSenha" class="modal-overlay" style="display: none;">
+  <div class="modal-box">
+    <h3>Digite os 4 últimos dígitos do seu CPF</h3>
+    <input type="text" id="cpf" maxlength="4" class="modal-input" />
+    <p id="mensagemErro" class="modal-erro">CPF incorreto!</p>
+
+    <p id="senhaReveladaModal" style="margin-top: 10px; font-weight: bold;"></p>
+
+    <div class="modal-botoes">
+  <button class="botao" onclick="verificarCPF()">Confirmar</button>
+  <button class="botao" style="background-color: #ccc; color: #333;" onclick="fecharModal()">Cancelar</button>
+</div>
+  </div>
+</div>
+
+   
+  <style>
+    * {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+}
+
+body {
+  display: flex;
+  min-height: 100vh;
+  background: linear-gradient(to right, #A1D8B5 0%, #B0B0B0 50%, #A1D8B5 100%);
+}
+
+.menu-lateral {
+  background: #ffffff;
+  width: 220px;
+  padding: 30px 20px;
+  box-shadow: 4px 0 10px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+}
+
+.menu-lateral .logo {
+  font-size: 20px;
+  color: #1E392A;
+  margin-bottom: 40px;
+  font-weight: 700;
+  user-select: none;
+  text-decoration: none;
+}
+
+.menu-lateral nav a {
+  display: block;
+  color: #1E392A;
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  text-decoration: none;
+  transition: 0.3s;
+  font-weight: 600;
+}
+
+.menu-lateral nav a:hover,
+.menu-lateral nav a.ativo {
+  background: #A1D8B5;
+  color: #ffffff;
+}
+
+.conteudo {
+  margin-left: 220px;
+  padding: 40px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.titulo {
+  font-size: 32px;
+  font-weight: bold;
+  color: #1E392A;
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.perfil-box {
+  background-color: #ffffff;
+  padding: 30px 40px;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 500px;
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.campo {
+  font-size: 16px;
+  color: #333;
+  padding: 8px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.ver-senha {
+  color: #1E392A;
+  font-weight: bold;
+  cursor: pointer;
+  margin-left: 8px;
+  font-size: 14px;
+}
+
+.botoes {
+  margin-top: 25px;
+  display: flex;
+  justify-content: center;
+}
+
+.botao {
+  padding: 12px 30px;
+  background-color: #007BFF;
+  color: white;
+  border: none;
+  border-radius: 30px;
+  font-size: 16px;
+  font-weight: bold;
+  text-decoration: none;
+  transition: 0.3s;
+}
+
+.botao:hover {
+  background-color: #327c66;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-box {
+  background: white;
+  padding: 30px;
+  border-radius: 10px;
+  text-align: center;
+  width: 90%;
+  max-width: 400px;
+}
+
+.modal-input {
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  margin: 15px 0;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.modal-erro {
+  color: red;
+  display: none;
+  margin-bottom: 10px;
+}
+
+.modal-botoes {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+}
+@media (max-width: 768px) {
+  .conteudo {
+    margin-left: 0;
+    padding: 20px;
+  }
+
+  .menu-lateral {
+    position: relative;
+    width: 100%;
+    height: auto;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-around;
+  }
+
+  .perfil-box {
+    width: 100%;
+    padding: 20px;
+  }
+
+  .botoes {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+  </style>
+
+<script src="{% static 'js/ver_senha.js' %}"></script>
+
+</body>
+</html>

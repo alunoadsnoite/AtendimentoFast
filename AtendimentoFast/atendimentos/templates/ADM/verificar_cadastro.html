@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Verificar Cadastro do Cliente</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+</head>
+<body>
+  <aside class="menu-lateral">
+    <a href="{% url 'pagina_inicial_adm' %}" class="logo">AtendimentoFast</a>
+    <nav>
+      <a href="{% url 'verificar_cadastro' %}" class="ativo">Agendar atendimento</a>
+      <a href="{% url 'cadastrar_cliente_adm' %}">Cadastrar cliente</a>
+      <a href="{% url 'fila_atendimento_adm' %}">Fila de espera</a>
+      <a href="{% url 'cadastrar_servicos_adm' %}">Cadastrar serviços</a>
+      <a href="{% url 'servicos_cadastrado' %}">Serviços</a>
+      <a href="{% url 'horario_atendimento' %}">Horário de atendimento</a>
+      <a href="{% url 'agenda_adm' %}">Agenda de atendimento</a>
+      <a href="{% url 'buscar_cliente' %}">Buscar cliente</a>
+      <a href="{% url 'encaixa_fila_adm' %}">Encaixar na fila</a>
+      <a href="{% url 'perfil_adm' %}">Perfil</a>
+      <a href="{% url 'inicio' %}">Sair</a>
+    </nav>
+  </aside>
+
+  <main class="conteudo-principal">
+    <div class="container">
+      <h2>Verificar Cadastro</h2>
+      <p>Antes de agendar, verifique se o cliente já possui cadastro no sistema:</p>
+      <div class="botoes">
+        <a href="{% url 'buscar_cliente' %}" class="botao">Cliente já cadastrado</a>
+        <a href="{% url 'cadastrar_cliente_adm' %}" class="botao">Cadastrar novo cliente</a>
+      </div>
+    </div>
+  </main>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      background: linear-gradient(to right, #A1D8B5 0%, #B0B0B0 50%, #A1D8B5 100%);
+      min-height: 100vh;
+      display: flex;
+    }
+
+    .menu-lateral {
+      background: #ffffff;
+      width: 220px;
+      padding: 20px 15px;
+      box-shadow: 4px 0 10px rgba(0,0,0,0.1);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100vh;
+    }
+
+    .menu-lateral .logo {
+      font-size: 18px;
+      color: #1E392A;
+      margin-bottom: 20px;
+      font-weight: 700;
+      user-select: none;
+      text-decoration: none;
+    }
+
+    .menu-lateral nav a {
+      display: block;
+      color: #1E392A;
+      padding: 8px 10px;
+      border-radius: 6px;
+      margin-bottom: 6px;
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 14px;
+      transition: 0.3s;
+    }
+
+    .menu-lateral nav a:hover,
+    .menu-lateral nav a.ativo {
+      background: #A1D8B5;
+      color: #ffffff;
+    }
+
+    .conteudo-principal {
+      flex: 1;
+      margin-left: 240px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      background: #ffffff;
+      padding: 40px 30px;
+      border-radius: 20px;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+      max-width: 600px;
+      width: 100%;
+      text-align: center;
+    }
+
+    h2 {
+      font-size: 24px;
+      color: #1E392A;
+      margin-bottom: 10px;
+    }
+
+    p {
+      color: #333;
+      margin-bottom: 30px;
+    }
+
+    .botoes {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .botao {
+      background: linear-gradient(135deg, #5FA885, #3E7F65);
+      color: white;
+      padding: 14px;
+      border: none;
+      border-radius: 12px;
+      text-decoration: none;
+      font-size: 16px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .botao:hover {
+      transform: scale(1.05);
+      box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+    }
+
+    @media (max-width: 768px) {
+      .menu-lateral {
+        width: 100%;
+        height: auto;
+        position: relative;
+      }
+
+      .conteudo-principal {
+        margin-left: 0;
+        margin-top: 0;
+      }
+    }
+  </style>
+</body>
+</html>

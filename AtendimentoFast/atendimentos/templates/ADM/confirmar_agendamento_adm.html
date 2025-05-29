@@ -1,0 +1,267 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Confirmar Atendimento</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet" />
+  
+</head>
+<body>
+
+  <aside class="menu-lateral">
+    <a href="{% url 'pagina_inicial_adm' %}" class="logo">AtendimentoFast</a>
+    <nav>
+      <a href="{% url 'verificar_cadastro' %}" class="ativo">Agendar atendimento</a>
+      <a href="{% url 'cadastrar_cliente_adm' %}">Cadastrar cliente</a>
+      <a href="{% url 'fila_atendimento_adm' %}">Fila de espera</a>
+      <a href="{% url 'cadastrar_servicos_adm' %}">Cadastrar serviços</a>
+      <a href="{% url 'servicos_cadastrado' %}">Serviços</a>
+      <a href="{% url 'horario_atendimento' %}">Horário de atendimento</a>
+      <a href="{% url 'agenda_adm' %}">Agenda de atendimento</a>
+      <a href="{% url 'buscar_cliente' %}">Buscar cliente</a>
+      <a href="{% url 'encaixa_fila_adm' %}">Encaixar na fila</a>
+      <a href="{% url 'perfil_adm' %}">Perfil</a>
+      <a href="{% url 'inicio' %}">Sair</a>
+    </nav>
+  </aside>
+
+  <main class="conteudo-principal">
+    <div class="conteudo-central">
+      <header class="cabecalho">
+        <h1>Confirmar atendimento</h1>
+        <p>Confira os dados abaixo antes de confirmar</p>
+      </header>
+
+      <div class="bloco-central">
+        <section class="agendamento">
+          <div class="dados-cliente">
+            <p><strong>Cliente,</strong> </p>
+            <p><strong>E-mail</strong> </p>
+            <p><strong>Telefone</strong></p>
+          </div>
+
+          <div class="dados-agendamento">
+            <p><strong>Serviço escolhido:</strong></p>
+            <p><strong>Data:</strong> </p>
+            <p><strong>Horário:</strong> </p>
+          </div>
+
+          <div class="container-botao">
+            <a href="{% url 'agendar_atendimento_adm' %}" class="botao botao-editar">Editar atendimento</a>
+            <button class="botao" id="btnConfirmar">Confirmar atendimento</button>
+          </div>
+        </section>
+      </div>
+    </div>
+  </main>
+
+   <!-- Modal de confirmação -->
+    <div id="modalOverlay" class="modal-overlay" style="display:none;">
+    <div class="modal">
+    <h2>Agendando com sucesso!</h2>
+    <button id="modalOkBtn" class="botao">OK</button>
+    </div>
+    </div>
+
+  <style>
+
+
+  * {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+}
+
+body {
+  display: flex;
+  min-height: 100vh;
+  background: linear-gradient(to right, #A1D8B5 0%, #B0B0B0 50%, #A1D8B5 100%);
+}
+
+ .menu-lateral {
+      background: #ffffff;
+      width: 220px;
+      padding: 20px 15px;
+      box-shadow: 4px 0 10px rgba(0,0,0,0.1);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100vh;
+    }
+
+    .menu-lateral .logo {
+      font-size: 18px;
+      color: #1E392A;
+      margin-bottom: 20px;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .menu-lateral nav a {
+      display: block;
+      color: #1E392A;
+      padding: 8px 10px;
+      border-radius: 6px;
+      margin-bottom: 6px;
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 14px;
+      transition: 0.3s;
+    }
+
+    .menu-lateral nav a:hover,
+    .menu-lateral nav a.ativo {
+      background: #A1D8B5;
+      color: #ffffff;
+    }
+.conteudo-principal {
+  margin-left: 220px;
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px 30px;
+  min-height: 100vh;
+}
+
+.conteudo-central {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.cabecalho {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.cabecalho h1 {
+  font-size: 32px;
+  color: #1E392A;
+  font-weight: 900;
+}
+
+.cabecalho p {
+  color: #000000;
+  font-size: 16px;
+  margin-top: 5px;
+}
+
+.bloco-central {
+  background: #ffffff;
+  padding: 30px 40px;
+  border-radius: 20px;
+  box-shadow: 0 0 15px rgba(0,0,0,0.2);
+  width: 100%;
+  max-width: 600px;
+}
+
+.agendamento {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.dados-cliente, .dados-agendamento {
+  margin-bottom: 20px;
+  font-size: 16px;
+  color: #1E392A;
+  font-weight: 600;
+}
+
+.dados-cliente p, .dados-agendamento p {
+  margin-top: 5px;
+  font-weight: 400;
+  color: #000000;
+}
+
+.container-botao {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.botao {
+  padding: 12px 30px;
+  background-color: #1E392A;
+  color: #fff;
+  font-weight: bold;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  font-size: 16px;
+  width: 100%;
+  max-width: 300px;
+  text-align: center;
+}
+
+.botao:hover {
+  background-color: #327c66;
+}
+
+.botao-editar {
+  background-color: #888;
+  text-decoration: none;
+}
+
+.botao-editar:hover {
+  background-color: #666;
+}
+
+.modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.5);
+      display: flex;
+      justify-content: center;
+     align-items: center;
+    z-index: 9999;
+}
+
+   .modal {
+     background: white;
+    padding: 30px 40px;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 0 15px rgba(0,0,0,0.3);
+}
+
+@media (max-width: 768px) {
+  .conteudo-principal {
+    margin-left: 0;
+    padding: 20px;
+  }
+
+  .menu-lateral {
+    position: relative;
+    width: 100%;
+    height: auto;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    padding: 10px;
+  }
+
+  .menu-lateral nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .bloco-central {
+    padding: 20px;
+  }
+}
+  </style>
+
+  <script src="{% static 'js/confirmar_agendamento_adm.js' %}"></script>
+</body>
+</html>

@@ -1,0 +1,241 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="https://fonts.googleapis.com/css2?family=League+Spartan&family=Poppins&display=swap" rel="stylesheet" />
+<title>Cadastrar Serviço</title>
+</head>
+
+<body>
+
+ <aside class="menu-lateral">
+    <a href="{% url 'pagina_inicial_adm' %}" class="logo">AtendimentoFast</a>
+    <nav>
+      <a href="{% url 'verificar_cadastro' %}">Agendar atendimento</a>
+      <a href="{% url 'cadastrar_cliente_adm' %}">Cadastrar cliente</a>
+      <a href="{% url 'fila_atendimento_adm' %}">Fila de espera</a>
+      <a href="{% url 'cadastrar_servicos_adm' %}" class="ativo">Cadastrar serviços</a>
+      <a href="{% url 'servicos_cadastrado' %}">Serviços</a>
+      <a href="{% url 'horario_atendimento' %}">Horário de atendimento</a>
+      <a href="{% url 'agenda_adm' %}">Agenda de atendimento</a>
+      <a href="{% url 'buscar_cliente' %}">Buscar cliente</a>
+      <a href="{% url 'encaixa_fila_adm' %}">Encaixar na fila</a>
+      <a href="{% url 'perfil_adm' %}">Perfil</a>
+      <a href="{% url 'inicio' %}">Sair</a>
+    </nav>
+  </aside>
+
+<main>
+  <h1>Cadastrar Serviço</h1>
+  <form id="form-servico" method="POST">
+  {% csrf_token %}
+
+  <label for="nome">Serviço</label>
+  <input type="text" id="nome" name="nome" required />
+
+  <label for="descricao">Descrição (opcional)</label>
+  <textarea id="descricao" name="descricao"></textarea>
+
+  <label for="preco">Valor (R$)</label>
+  <input type="number" id="preco" name="preco" step="0.01" min="0" required />
+
+  <label for="duracao">Duração em minutos</label>
+  <input type="number" id="duracao" name="duracao" min="1" required />
+
+  <button type="submit">Cadastrar Serviço</button>
+</form>
+
+</main>
+
+<!-- Modal -->
+<div id="modal">
+  <div class="modal-content">
+    <p>Serviço cadastrado com sucesso!</p>
+    <div class="modal-buttons">
+      <button id="btn-ver-servicos">Ver serviços</button>
+      <button id="btn-cadastrar-novo">Cadastrar serviço</button>
+    </div>
+  </div>
+</div>
+
+<style>
+  /* Fundo gradiente */
+  body {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(to bottom, #A1D8B5 0%, #B0B0B0 50%);
+    display: flex;
+    min-height: 100vh;
+  }
+
+  .menu-lateral {
+      background: #ffffff;
+      width: 220px;
+      padding: 20px 15px;
+      box-shadow: 4px 0 10px rgba(0,0,0,0.1);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100vh;
+    }
+
+    .menu-lateral .logo {
+      font-size: 18px;
+      color: #1E392A;
+      margin-bottom: 20px;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .menu-lateral nav a {
+      display: block;
+      color: #1E392A;
+      padding: 8px 10px;
+      border-radius: 6px;
+      margin-bottom: 6px;
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 14px;
+      transition: 0.3s;
+    }
+
+    .menu-lateral nav a:hover,
+    .menu-lateral nav a.ativo {
+      background: #A1D8B5;
+      color: #ffffff;
+    }
+  
+ 
+   main {
+      margin-left: 220px;
+      padding: 40px 20px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    h1 {
+      color: #1E3924;
+      font-weight: 700;
+      margin-bottom: 40px;
+      text-align: center;
+      font-family: 'League Spartan', sans-serif;
+    }
+
+    form#form-servico {
+      background: rgba(255, 255, 255, 0.9);
+      padding: 25px 30px;
+      border-radius: 8px;
+      width: 320px;
+      box-sizing: border-box;
+      box-shadow: 0 0 10px rgba(0,0,0,0.15);
+    }
+
+ label {
+  margin-bottom: 8px;
+  color: #333;
+  font-weight: 600;
+  display: block;
+}
+
+input,
+textarea {
+  padding: 12px 15px;
+  font-size: 16px;
+  border: none;
+  border-radius: 50px;
+  background-color: #f0f0f0;
+  color: #333;
+  margin-bottom: 20px;
+  height: 44px;
+  box-sizing: border-box;
+  outline: none;
+  transition: box-shadow 0.3s ease;
+  width: 100%;
+  font-family: 'Poppins', sans-serif;
+}
+
+textarea {
+  height: auto;
+  min-height: 80px;
+  resize: vertical;
+  border-radius: 25px;
+  padding-top: 12px;
+  padding-bottom: 12px;
+}
+
+input:focus,
+textarea:focus {
+  box-shadow: 0 0 5px #A1D8B5;
+}
+
+    button {
+      background-color: #1E3924;
+      border: none;
+      color: white;
+      font-size: 1.1em;
+      font-weight: bold;
+      padding: 10px 0;
+      border-radius: 50px;
+      cursor: pointer;
+      width: 100%;
+      margin-top: 10px;
+      transition: background-color 0.3s;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    button:hover {
+      background-color: #16301C;
+    }
+
+    #modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.4);
+      justify-content: center;
+      align-items: center;
+      z-index: 999;
+    }
+
+    #modal .modal-content {
+      background: white;
+      padding: 30px 40px;
+      border-radius: 8px;
+      width: 320px;
+      box-sizing: border-box;
+      text-align: center;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.25);
+    }
+
+    #modal .modal-content p {
+      font-size: 1.2em;
+      margin-bottom: 25px;
+      font-weight: bold;
+    }
+
+    .modal-buttons {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .modal-buttons button {
+      width: 100%;
+      padding: 10px 0;
+      border-radius: 50px;
+    }
+</style>
+
+<script src="{% static 'js/cadastrar_servico.js' %}">
+  window.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('modal').style.display = 'flex'; });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,193 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Fila de Atendimento</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+ <aside class="menu-lateral">
+    <a href="{% url 'pagina_inicial_adm' %}" class="logo">AtendimentoFast</a>
+    <nav>
+      <a href="{% url 'verificar_cadastro' %}">Agendar atendimento</a>
+      <a href="{% url 'cadastrar_cliente_adm' %}">Cadastrar cliente</a>
+      <a href="{% url 'fila_atendimento_adm' %}" class="ativo">Fila de espera</a>
+      <a href="{% url 'cadastrar_servicos_adm' %}">Cadastrar serviços</a>
+      <a href="{% url 'servicos_cadastrado' %}">Serviços</a>
+      <a href="{% url 'horario_atendimento' %}">Horário de atendimento</a>
+      <a href="{% url 'agenda_adm' %}">Agenda de atendimento</a>
+      <a href="{% url 'buscar_cliente' %}">Buscar cliente</a>
+      <a href="{% url 'encaixa_fila_adm' %}">Encaixar na fila</a>
+      <a href="{% url 'perfil_adm' %}">Perfil</a>
+      <a href="{% url 'inicio' %}">Sair</a>
+    </nav>
+  </aside>
+
+
+  <div class="conteudo">
+    <h1>Fila de Atendimento</h1>
+
+    <div class="card-fila" data-cliente-id="1">
+  <span class="nome-cliente">João Silva</span>
+  <div class="acoes">
+    <button class="botao-pequeno cancelar" data-acao="cancelar">Cancelar</button>
+    <button class="botao-pequeno remarcar" data-acao="remarcar">Remarcar</button>
+    <button class="botao-pequeno finalizar" data-acao="finalizar">Finalizar</button>
+  </div>
+</div>
+
+    {% for cliente in fila %}
+      <div class="card-fila" data-cliente-id="{{ cliente.id }}">
+        <span class="nome-cliente">
+          {{ cliente.nome }}
+        </span>
+        <div class="acoes">
+          <button class="botao-pequeno cancelar" data-acao="cancelar">Cancelar</button>
+          <button class="botao-pequeno remarcar" data-acao="remarcar">Remarcar</button>
+          <button class="botao-pequeno finalizar" data-acao="finalizar">Finalizar</button>
+        </div>
+      </div>
+    {% empty %}
+      <p>Nenhum cliente na fila.</p>
+    {% endfor %}
+  </div>
+
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      background: linear-gradient(135deg, #A1D8B5 0%, #B0B0B0 50%, #A1D8B5 100%);
+      display: flex;
+      min-height: 100vh;
+    }
+    .menu-lateral {
+      background: #ffffff;
+      width: 220px;
+      padding: 20px 15px;
+      box-shadow: 4px 0 10px rgba(0,0,0,0.1);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100vh;
+    }
+
+    .menu-lateral .logo {
+      font-size: 18px;
+      color: #1E392A;
+      margin-bottom: 20px;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .menu-lateral nav a {
+      display: block;
+      color: #1E392A;
+      padding: 8px 10px;
+      border-radius: 6px;
+      margin-bottom: 6px;
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 14px;
+      transition: 0.3s;
+    }
+
+    .menu-lateral nav a:hover,
+    .menu-lateral nav a.ativo {
+      background: #A1D8B5;
+      color: #ffffff;
+    }
+    .conteudo {
+      margin-left: 240px;
+      padding: 30px;
+      flex: 1;
+      text-align: center;
+    }
+    h1 {
+      color: #1E3924;
+      margin-bottom: 30px;
+      font-weight: 700;
+    }
+    .card-fila {
+      background: #fff;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: none;
+      margin-left: auto;
+      margin-right: auto;
+      width: 100%;
+    }
+    .nome-cliente {
+      font-weight: bold;
+      font-size: 18px;
+      color: #1E3924;
+    }
+    .acoes {
+      display: flex;
+      gap: 10px;
+    }
+    .botao-pequeno {
+      padding: 8px 16px;
+      font-size: 14px;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background-color 0.3s ease;
+      color: white;
+      min-width: 80px;
+    }
+    .cancelar {
+      background-color: #d9534f;
+    }
+    .cancelar:hover {
+      background-color: #c9302c;
+    }
+    .remarcar {
+      background-color: #5bc0de;
+    }
+    .remarcar:hover {
+      background-color: #31b0d5;
+    }
+    .finalizar {
+      background-color: #28a745;
+    }
+    .finalizar:hover {
+      background-color: #1e7e34;
+    }
+
+    @media (max-width: 768px) {
+      .menu-lateral {
+        position: relative;
+        width: 100%;
+        height: auto;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      .conteudo {
+        margin-left: 0;
+        padding: 20px;
+      }
+      .card-fila {
+        flex-direction: column;
+        align-items: flex-start;
+        max-width: 90%;
+      }
+      .acoes {
+        margin-top: 10px;
+      }
+    }
+  </style>
+
+</body>
+</html>

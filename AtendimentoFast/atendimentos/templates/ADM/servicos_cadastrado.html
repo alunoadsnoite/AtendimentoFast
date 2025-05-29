@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Serviços Cadastrados</title>
+  <link rel="stylesheet" href="servicos_cadastrados.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+  <aside class="menu-lateral">
+    <a href="{% url 'pagina_inicial_adm' %}" class="logo">AtendimentoFast</a>
+    <nav>
+      <a href="{% url 'verificar_cadastro' %}">Agendar atendimento</a>
+      <a href="{% url 'cadastrar_cliente_adm' %}">Cadastrar cliente</a>
+      <a href="{% url 'fila_atendimento_adm' %}">Fila de espera</a>
+      <a href="{% url 'cadastrar_servicos_adm' %}">Cadastrar serviços</a>
+      <a href="{% url 'servicos_cadastrado' %}" class="ativo">Serviços</a>
+      <a href="{% url 'horario_atendimento' %}">Horário de atendimento</a>
+      <a href="{% url 'agenda_adm' %}">Agenda de atendimento</a>
+      <a href="{% url 'buscar_cliente' %}">Buscar cliente</a>
+      <a href="{% url 'encaixa_fila_adm' %}">Encaixar na fila</a>
+      <a href="{% url 'perfil_adm' %}">Perfil</a>
+      <a href="{% url 'inicio' %}">Sair</a>
+    </nav>
+  </aside>
+
+    <main class="conteudo">
+      <h1>Serviços Cadastrados</h1>
+
+ <div class="cards-servicos">
+  {% for servico in servicos %}
+    <div class="card">
+      <h2>{{ servico.nome }}</h2>
+      {% if servico.descricao %}
+        <p><strong>Descrição:</strong> {{ servico.descricao }}</p>
+      {% endif %}
+      <p><strong>Duração:</strong> {{ servico.duracao }} minutos</p>
+      <p><strong>Valor:</strong> R$ {{ servico.preco }}</p>
+     <div class="botoes">
+  <a href="{% url 'editar_servico' servico.id %}" class="btn editar">Editar</a>
+  <a href="{% url 'excluir_servico' servico.id %}" class="btn excluir" onclick="return confirm('Tem certeza que deseja excluir este serviço?')">Excluir</a>
+</div>
+    </div>
+  {% empty %}
+    <p>Nenhum serviço cadastrado.</p>
+  {% endfor %}
+</div>
+
+      </div>
+    </main>
+  </div>
+
+  <style>
+
+   body {
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(to bottom, #A1D8B5 0%, #B0B0B0 50%);
+  min-height: 100vh;
+  display: flex;
+}
+
+.container {
+  display: flex;
+  width: 100%;
+}
+
+ .menu-lateral {
+      background: #ffffff;
+      width: 220px;
+      padding: 20px 15px;
+      box-shadow: 4px 0 10px rgba(0,0,0,0.1);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100vh;
+    }
+
+    .menu-lateral .logo {
+      font-size: 18px;
+      color: #1E392A;
+      margin-bottom: 20px;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .menu-lateral nav a {
+      display: block;
+      color: #1E392A;
+      padding: 8px 10px;
+      border-radius: 6px;
+      margin-bottom: 6px;
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 14px;
+      transition: 0.3s;
+    }
+
+    .menu-lateral nav a:hover,
+    .menu-lateral nav a.ativo {
+      background: #A1D8B5;
+      color: #ffffff;
+    }
+
+.conteudo {
+  margin-left: 220px;
+  padding: 40px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.conteudo h1 {
+  text-align: center;
+  margin-bottom: 40px;
+  font-size: 32px;
+}
+
+.cards-servicos {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 30px;
+}
+
+.card {
+  background-color: white;
+  padding: 20px;
+  border-radius: 20px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  transition: transform 0.2s ease;
+}
+
+.card:hover {
+  transform: scale(1.02);
+}
+
+.card h2 {
+  margin-top: 0;
+  font-size: 20px;
+  color: #1E3924;
+}
+
+.card p {
+  margin: 8px 0;
+}
+
+.botoes {
+  margin-top: 15px;
+  display: flex;
+  gap: 10px;
+}
+
+.btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 50px;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s ease;
+}
+
+.btn.editar {
+  background-color: #007bff;
+}
+
+.btn.excluir {
+  background-color: #dc3545;
+}
+
+.btn.editar:hover {
+  background-color: #0056b3;
+}
+
+.btn.excluir:hover {
+  background-color: #b02a37;
+}
+
+@media (max-width: 768px) {
+  .conteudo {
+    margin-left: 0;
+    padding: 20px;
+  }
+
+  .menu-lateral {
+    position: relative;
+    width: 100%;
+    height: auto;
+  }
+}
+
+  </style>
+</body>
+</html>

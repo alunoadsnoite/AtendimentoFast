@@ -1,0 +1,214 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <title>Cadastro</title>
+</head>
+<body>
+
+  <div class="cadastro-container">
+    <h2 class="titulo">Preencha com os seus dados para cadastro</h2>
+    <h1 class="logo">Atendimento Fast</h1>
+
+    <div class="forms-wrapper">
+      <!-- Lado esquerdo -->
+      <div class="esquerdo">
+        <form id="form-esquerda" method="POST">
+          {% csrf_token %}
+          <label for="nome">Nome completo</label>
+          <input type="text" id="nome" name="nome" placeholder="Digite seu nome completo" required>
+
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" placeholder="exemplo@email.com" required>
+
+          <label for="telefone">Telefone</label>
+          <input type="tel" id="telefone" name="telefone" placeholder="(00) 9 0000-0000" required>
+
+          <label for="cpf">CPF</label>
+          <input type="text" id="cpf" name="cpf" placeholder="000.000.000-00" required>
+
+          <label for="nascimento">Data de nascimento</label>
+          <input type="date" id="nascimento" name="data_nascimento" placeholder="DD/MM/AAAA" required>
+        </form>
+      </div>
+
+      <!-- Lado direito -->
+      <div class="direito">
+        <form id="form-direita">
+          <label for="endereco">Endereço</label>
+          <input type="text" id="endereco" name="endereco" placeholder="Rua Exemplo, 123" required>
+
+          <label for="cep">CEP</label>
+          <input type="text" id="cep" name="cep" placeholder="00000-000" required>
+
+          <label for="senha">Senha</label>
+<div class="senha-wrapper">
+  <input type="password" id="senha" placeholder="Digite sua senha" required>
+  <i class="fa-solid fa-eye toggle-password" onclick="togglePassword('senha', this)"></i>
+</div>
+
+<label for="confirmarSenha">Confirmar senha</label>
+<div class="senha-wrapper">
+  <input type="password" id="confirmarSenha" placeholder="Confirme sua senha" required>
+  <i class="fa-solid fa-eye toggle-password" onclick="togglePassword('confirmarSenha', this)"></i>
+</div>
+           <a href="{% url 'pagina_inicial_cliente' %}" class="botao">Cadastrar</a>
+        </form>
+        <p class="login-link">Já possui cadastro? <a href="{% url 'login' %}">Faça login</a></p>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(to right, #A1D8B5 0%, #B0B0B0 50%, #A1D8B5 100%);
+    }
+     .logo {
+     font-family: 'League Spartan', sans-serif;
+     font-size: 28px;
+     color: #1E392A;
+     position: fixed;
+     top: 20px;
+     right: 50px;
+     margin-bottom: 0px;
+  }
+  .titulo {
+    font-size: 22px;
+    color: #1E392A;
+    position: fixed;
+    top: 20px;
+    left: 50px;
+    margin-bottom: 0px;
+  }
+   .esquerdo {
+    width: 50%; 
+    float: left; /* alinha à esquerda */
+    padding: 20px;
+    margin-top: 70px;
+    box-sizing: border-box;
+  }
+
+  #form-esquerda {
+    display: flex;
+    flex-direction: column;
+  }
+
+  label, input {
+    margin-bottom: 10px;
+  }
+
+  input {
+    padding: 8px;
+    font-size: 16px;
+  }
+
+  .direito {
+    width: 50%; 
+    float: right; 
+    padding: 20px;
+    margin-top: 70px;
+    box-sizing: border-box;
+  }
+
+  #form-direita {
+    display: flex;
+    flex-direction: column;
+  }
+
+  label, input {
+    margin-bottom: 10px;
+  }
+
+  input {
+    padding: 8px;
+    font-size: 16px;
+    border: none;
+    border-radius: 50px;
+    background-color: #f0f0f0;
+    font-size: 16px;
+    color: #333;
+    height: 30px;
+  
+  }
+
+  .senha-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.senha-wrapper input {
+  width: 100%;
+  padding-right: 40px;
+}
+
+.toggle-password {
+  position: absolute;
+  right: 15px;
+  color: #666;
+  cursor: pointer;
+}
+  
+ .botao {
+      display: inline-block;
+      padding: 12px 30px;
+      background-color: #1E392A;
+      color: #fff;
+      text-align: center;
+      font-weight: bold;
+      text-decoration: none;
+      border-radius: 30px;
+      font-size: 16px;
+      transition: background-color 0.3s ease;
+      margin-top: 30px;
+    }
+
+    .botao:hover {
+      background-color: #327c66;
+    }
+
+  .login-link{
+    margin-top: 10px;
+    font-size: 14px;
+    color: #555;
+  }
+  .login-link a {
+    color: #198754;
+    text-decoration: none;
+  }
+
+  .login-link a:hover {
+    text-decoration: underline;
+  }
+
+  /* RESPONSIVIDADE */
+@media (max-width: 768px) {
+  .esquerdo, .direito {
+    width: 100%;
+    float: none;
+    padding: 20px;
+  }
+
+  .logo, .titulo {
+    position: static;
+    text-align: center;
+    margin: 10px 0;
+  }
+
+  body {
+    background: #A1D8B5; 
+  }
+}
+  </style>
+
+  
+  <script src="{% static 'js/cadastro.js' %}"></script>
+
+</body>
+</html>

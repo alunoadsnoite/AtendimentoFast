@@ -1,0 +1,290 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Editar Perfil</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+  <aside class="menu-lateral">
+    <a href="{% url 'pagina_inicial_cliente' %}" class="logo">AtendimentoFast</a>
+    <nav>
+       <a href="{% url 'agendar_atendimento' %}">Agendar atendimento</a>
+      <a href="{% url 'agendamentos_cliente' %}">Meus agendamentos</a>
+      <a href="{% url 'fila_cliente' %}">Fila de espera</a>
+      <a href="{% url 'perfil_cliente' %}">Perfil</a>
+      <a href="{% url 'inicio' %}">Sair</a>
+    </nav>
+  </aside>
+
+  <main class="conteudo-principal">
+    <header class="cabecalho">
+      <h1>Editar Perfil</h1>
+    </header>
+
+    <section class="formulario-edicao">
+      <div class="card-edicao">
+        <form action="#" method="POST">
+  <label for="nome">Nome completo:</label>
+  <input type="text" id="nome" name="nome" value="Fulano da Silva" required />
+
+  <label for="telefone">Telefone:</label>
+  <input type="tel" id="telefone" name="telefone" value="00 9 0000-0000" required />
+
+  <label for="email">E-mail:</label>
+  <p style="padding: 10px; border: 1px solid #ccc; border-radius: 8px; background-color: #f4f4f4; color: #555;">emaildocliente@gmail.com</p>
+
+  <div style="text-align: right;">
+    <span onclick="abrirModalEditarSenha()" style="color: #1E392A; cursor: pointer; font-weight: 600; text-decoration: underline;">Editar senha</span>
+  </div>
+
+  <div class="botoes-edicao">
+    <button type="button" class="botao" onclick="window.history.back()">Salvar alterações</button>
+    <button type="button" class="botao botao-editar" onclick="window.history.back()">Cancelar</button>
+  </div>
+</form>
+      </div>
+    </section>
+  </main>
+
+  <!-- Modal de Editar Senha -->
+<div id="modalEditarSenha" class="modal" style="display: none;">
+  <div class="modal-conteudo">
+    <h2>Editar Senha</h2>
+    <label for="senhaAtual">Senha atual</label>
+    <input type="password" id="senhaAtual" placeholder="Digite sua senha atual" />
+
+    <label for="novaSenha">Nova senha</label>
+    <input type="password" id="novaSenha" placeholder="Digite a nova senha" />
+
+    <label for="confirmarSenha">Confirmar nova senha</label>
+    <input type="password" id="confirmarSenha" placeholder="Confirme a nova senha" />
+
+    <div class="botoes-modal">
+      <button class="botao" onclick="salvarNovaSenha()">Salvar</button>
+      <button class="botao-cancelar" onclick="fecharModalEditarSenha()">Cancelar</button>
+    </div>
+    <p id="mensagemErro" style="color: red; margin-top: 10px;"></p>
+  </div>
+</div>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      display: flex;
+      min-height: 100vh;
+      background: linear-gradient(to right, #A1D8B5 0%, #B0B0B0 50%, #A1D8B5 100%);
+    }
+
+    .menu-lateral {
+      background: #ffffff;
+      width: 220px;
+      padding: 30px 20px;
+      box-shadow: 4px 0 10px rgba(0,0,0,0.1);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100vh;
+    }
+
+    .menu-lateral .logo {
+      font-size: 20px;
+      color: #1E392A;
+      margin-bottom: 40px;
+      font-weight: 700;
+      user-select: none;
+      text-decoration: none;
+    }
+
+    .menu-lateral nav a {
+      display: block;
+      color: #1E392A;
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      text-decoration: none;
+      transition: 0.3s;
+      font-weight: 600;
+    }
+
+    .menu-lateral nav a:hover,
+    .menu-lateral nav a.ativo {
+      background: #A1D8B5;
+      color: #ffffff;
+    }
+
+    .conteudo-principal {
+      margin-left: 220px;
+      padding: 40px 30px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .cabecalho {
+      width: 100%;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .cabecalho h1 {
+      font-size: 32px;
+      color: #1E392A;
+      font-weight: 900;
+    }
+
+    .formulario-edicao {
+      display: flex;
+      justify-content: center;
+      width: 100%;
+    }
+
+    .card-edicao {
+      background-color: #ffffff;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      max-width: 500px;
+      width: 100%;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    label {
+      font-weight: 600;
+      color: #1E392A;
+    }
+
+    input {
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+
+    .botoes-edicao {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    .botao {
+      padding: 12px 30px;
+      background-color: #1E392A;
+      color: #fff;
+      font-weight: bold;
+      border-radius: 30px;
+      font-size: 16px;
+      border: none;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      width: 100%;
+    }
+
+    .botao:hover {
+      background-color: #327c66;
+    }
+
+    .botao-editar {
+      background-color: #888;
+    }
+
+    .botao-editar:hover {
+      background-color: #666;
+    }
+
+    .modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.modal-conteudo {
+  background: #fff;
+  padding: 30px;
+  border-radius: 15px;
+  max-width: 400px;
+  width: 90%;
+  box-shadow: 0 0 10px rgba(0,0,0,0.25);
+  text-align: center;
+}
+
+.modal-conteudo input {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
+.botoes-modal {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 20px;
+}
+
+.botao-cancelar {
+  padding: 12px 30px;
+  background-color: #888;
+  color: #fff;
+  border: none;
+  border-radius: 30px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.botao-cancelar:hover {
+  background-color: #666;
+}
+
+    @media (max-width: 768px) {
+      .conteudo-principal {
+        margin-left: 0;
+        padding: 20px;
+      }
+
+      .menu-lateral {
+        position: relative;
+        width: 100%;
+        height: auto;
+        flex-direction: row;
+        justify-content: space-around;
+        flex-wrap: wrap;
+        padding: 10px;
+      }
+
+      .card-edicao {
+        margin-top: 20px;
+      }
+    }
+  </style>
+
+  <script src="{% static 'js/ver_senha.js' %}"></script>
+
+</body>
+</html>
