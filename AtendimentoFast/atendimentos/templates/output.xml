@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generator="Robot 7.3 (Python 3.13.3 on linux)" generated="2025-05-30T15:45:11.971992" rpa="false" schemaversion="5">
+<suite id="s1" name="Test" source="/home/valdenor/Documentos/GitHub/AtendimentoFast/AtendimentoFast/atendimentos/templates/test.robot">
+<test id="s1-t1" name="Open Browser Example" line="5">
+<kw name="Open Browser">
+<msg time="2025-05-30T15:45:12.044238" level="FAIL">No keyword with name 'Open Browser' found.</msg>
+<arg>https://robotframework.org</arg>
+<arg>chrome</arg>
+<status status="FAIL" start="2025-05-30T15:45:12.044031" elapsed="0.000431">No keyword with name 'Open Browser' found.</status>
+</kw>
+<kw name="Sleep" owner="BuiltIn">
+<arg>3s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="NOT RUN" start="2025-05-30T15:45:12.045614" elapsed="0.000265"/>
+</kw>
+<kw name="Close Browser">
+<status status="NOT RUN" start="2025-05-30T15:45:12.046917" elapsed="0.000138"/>
+</kw>
+<status status="FAIL" start="2025-05-30T15:45:12.040375" elapsed="0.007383">No keyword with name 'Open Browser' found.</status>
+</test>
+<status status="FAIL" start="2025-05-30T15:45:11.974703" elapsed="0.074348"/>
+</suite>
+<statistics>
+<total>
+<stat pass="0" fail="1" skip="0">All Tests</stat>
+</total>
+<tag>
+</tag>
+<suite>
+<stat name="Test" id="s1" pass="0" fail="1" skip="0">Test</stat>
+</suite>
+</statistics>
+<errors>
+<msg time="2025-05-30T15:45:12.038703" level="ERROR">Error in file '/home/valdenor/Documentos/GitHub/AtendimentoFast/AtendimentoFast/atendimentos/templates/test.robot' on line 2: Importing library 'SeleniumLibrary' failed: ModuleNotFoundError: No module named 'SeleniumLibrary'
+Traceback (most recent call last):
+  None
+PYTHONPATH:
+  /home/valdenor/Documentos/GitHub/AtendimentoFast/.venv/bin
+  /usr/lib/python313.zip
+  /usr/lib/python3.13
+  /usr/lib/python3.13/lib-dynload
+  /home/valdenor/Documentos/GitHub/AtendimentoFast/.venv/lib/python3.13/site-packages</msg>
+</errors>
+</robot>
