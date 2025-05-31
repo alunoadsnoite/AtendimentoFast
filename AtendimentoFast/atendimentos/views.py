@@ -1,13 +1,27 @@
-from django.shortcuts import render, get_object_or_404, redirect
+from django.shortcuts import render, get_object_or_404
 from .models import Cliente
 from .models import Servico
 from django.contrib import messages
+from django.shortcuts import redirect
 from .forms import ClienteForm
 from django.db.models import Q
 from .models import HorarioAtendimento
 from .models import Agendamento
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
+from django.utils.dateparse import parse_date
+from django.http import HttpResponseBadRequest, HttpResponse
+from django.utils import timezone
+from datetime import time
+from collections import defaultdict
+from django.http import HttpResponseRedirect
+from django.urls import reverse
 import calendar
+from django.utils.dateparse import parse_date
+from django.utils import timezone
+from django.views.decorators.http import require_POST
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import AnonymousUser
+from django.contrib.auth import get_user_model
 
 DIAS_SEMANA_PT = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo']
 
@@ -60,10 +74,99 @@ def buscar_cliente(request):
     return render(request, 'adm/buscar_cliente.html')
 
 def agenda_adm(request):
-    return render(request, 'adm/agenda_adm.html')
+    hoje = timezone.now().date()
+    periodo = request.GET.get('periodo', 'dia')  
+    data_str = request.GET.get('data', '')
+    data_selecionada = parse_date(data_str) or hoje
+    dias_do_mes = None
 
-def cadastrar_cliente_adm(request):
-    return render(request, 'adm/cadastrar_cliente_adm.html')
+    if periodo == 'dia':
+        agendamentos_qs = Agendamento.objects.filter(data=data_selecionada).order_by('hora')
+        dia_anterior = data_selecionada - timedelta(days=1)
+        dia_posterior = data_selecionada + timedelta(days=1)
+
+        context = {
+            'periodo_selecionado': periodo,
+            'agendamentos': agendamentos_qs,
+            'data_selecionada': data_selecionada,
+            'hoje': hoje,
+            'dia_anterior': dia_anterior.isoformat(),
+            'dia_posterior': dia_posterior.isoformat(),
+        }
+        return render(request, 'adm/agenda_adm.html', context)
+
+    elif periodo == 'semana':
+        semana_param = request.GET.get('semana')
+        if semana_param:
+            try:
+                hoje = parse_date(semana_param) or hoje
+            except ValueError:
+                pass
+
+        dias_da_semana = [hoje + timedelta(days=i) for i in range(7)]
+        fim = dias_da_semana[-1]
+
+        agendamentos_qs = Agendamento.objects.filter(data__range=[hoje, fim]).order_by('data', 'hora')
+        agendamentos_por_dia = defaultdict(list)
+        for ag in agendamentos_qs:
+            agendamentos_por_dia[ag.data].append(ag)
+
+        nomes_dias_semana = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom']
+
+        semana_anterior = (hoje - timedelta(days=7)).isoformat()
+        semana_proxima = (hoje + timedelta(days=7)).isoformat()
+
+        context = {
+            'periodo_selecionado': periodo,
+            'dias_da_semana': dias_da_semana,
+            'agendamentos_por_dia': agendamentos_por_dia,
+            'nomes_dias_semana': nomes_dias_semana,
+            'agendamentos': agendamentos_qs,
+            'hoje': timezone.now().date(),
+            'semana_anterior': semana_anterior,
+            'semana_proxima': semana_proxima,
+        }
+        return render(request, 'adm/agenda_adm.html', context)
+
+    elif periodo == 'mes':
+        mes_param = request.GET.get('mes')  # Espera formato "2025-06"
+        if mes_param:
+            try:
+                ano, mes = map(int, mes_param.split('-'))
+                hoje = date(ano, mes, 1)
+            except ValueError:
+                ano = hoje.year
+                mes = hoje.month
+        else:
+            ano = hoje.year
+            mes = hoje.month
+
+        primeiro_dia = date(ano, mes, 1)
+        dias_no_mes = calendar.monthrange(ano, mes)[1]
+        dias_do_mes = [primeiro_dia + timedelta(days=i) for i in range(dias_no_mes)]
+
+        mes_anterior = (primeiro_dia.replace(day=1) - timedelta(days=1)).replace(day=1)
+        mes_posterior = (primeiro_dia.replace(day=28) + timedelta(days=4)).replace(day=1)
+
+        agendamentos_qs = Agendamento.objects.filter(
+            data__year=ano,
+            data__month=mes
+        ).order_by('data', 'hora')
+
+        agendamentos_por_dia = defaultdict(list)
+        for ag in agendamentos_qs:
+            agendamentos_por_dia[ag.data].append(ag)
+
+        context = {
+            'periodo_selecionado': periodo,
+            'dias_do_mes': dias_do_mes,
+            'agendamentos_por_dia': agendamentos_por_dia,
+            'agendamentos': agendamentos_qs,
+            'hoje': hoje,
+            'mes_anterior': mes_anterior.strftime('%Y-%m'),
+            'mes_posterior': mes_posterior.strftime('%Y-%m'),
+        }
+        return render(request, 'adm/agenda_adm.html', context)
 
 def cadastrar_servicos_adm(request):
     if request.method == 'POST':
@@ -97,23 +200,13 @@ def cadastrar_servicos_adm(request):
 
     return render(request, 'adm/cadastrar_servicos_adm.html')
 
-def dados_cliente_adm(request):
-    return render(request, 'adm/dados_cliente_adm.html')
 
 def encaixa_fila_adm(request):
     return render(request, 'adm/encaixa_fila_adm.html')
 
-def fila_atendimento_adm(request):
-    return render(request, 'adm/fila_atendimento_adm.html')
 
 def pagina_inicial_adm(request):
     return render(request, 'adm/pagina_inicial_adm.html')
-
-def perfil_adm(request):
-    return render(request, 'adm/perfil_adm.html')
-
-def remarcar_atendimento_adm(request):
-    return render(request, 'adm/remarcar_atendimento_adm.html')
 
 def servicos_cadastrado(request):
     return render(request, 'adm/servicos_cadastrado.html')
@@ -128,15 +221,74 @@ def agendar_atendimento_adm(request, cliente_id=None):
 
     servicos = Servico.objects.all()
 
+    servico_id = request.GET.get('servico')
+    data_str = request.GET.get('data')
+
+    duracao_servico = None
+    servico = None
+    if servico_id:
+        try:
+            servico = Servico.objects.get(id=servico_id)
+            duracao_servico = servico.duracao
+        except Servico.DoesNotExist:
+            servico = None
+            duracao_servico = None
+
+    data = None
+    horarios_disponiveis = []
+
+    if data_str:
+        data = datetime.strptime(data_str, '%Y-%m-%d').date()
+
+        weekday = data.weekday()
+        dia_semana = '0' if weekday == 6 else str(weekday + 1)
+
+        horarios = HorarioAtendimento.objects.filter(
+            dia_semana=dia_semana,
+            ativo=True
+        )
+
+        agendamentos = Agendamento.objects.filter(data=data)
+
+        def horario_disponivel(hora_teste):
+            for ag in agendamentos:
+                ag_inicio = datetime.combine(data, ag.hora)
+                ag_fim = ag_inicio + timedelta(minutes=ag.servico.duracao)
+                teste_inicio = datetime.combine(data, hora_teste)
+                teste_fim = teste_inicio + timedelta(minutes=duracao_servico)
+                if (teste_inicio < ag_fim) and (ag_inicio < teste_fim):
+                    return False
+            return True
+
+        for horario in horarios:
+            hora_atual = datetime.combine(data, horario.hora_inicio)
+            hora_fim = datetime.combine(data, horario.hora_fim)
+
+            while hora_atual + timedelta(minutes=duracao_servico or 30) <= hora_fim:
+                # Filtra horários que já passaram se for hoje
+                if data == datetime.today().date():
+                    if hora_atual.time() < datetime.now().time():
+                        hora_atual += timedelta(minutes=30)
+                        continue
+
+                if duracao_servico:
+                    if horario_disponivel(hora_atual.time()):
+                        horarios_disponiveis.append(hora_atual.time())
+                else:
+                    horarios_disponiveis.append(hora_atual.time())
+                hora_atual += timedelta(minutes=30)
+
     context = {
         'cliente': cliente,
+        'cliente_id': cliente_id,
         'servicos': servicos,
+        'servico_id': servico_id,
+        'data': data,
+        'horarios_disponiveis': horarios_disponiveis
     }
+
     return render(request, 'adm/agendar_atendimento_adm.html', context)
 
-
-def confirmar_agendamento_adm(request):
-    return render(request, 'adm/confirmar_agendamento_adm.html')
 
 def dados_cliente_adm(request, cliente_id):
     cliente = Cliente.objects.get(id=cliente_id)
@@ -299,8 +451,8 @@ def salvar_horarios(request):
             for inicio, fim in horarios:
                 HorarioAtendimento.objects.create(
                     dia_semana=django_dia_semana,
-                    hora_inicio=inicio,
-                    hora_fim=fim,
+                    hora_inicio=datetime.strptime(inicio, '%H:%M').time(),
+                    hora_fim=datetime.strptime(fim, '%H:%M').time(),
                     ativo=ativo
                 )
 
@@ -355,34 +507,214 @@ def dados_cliente_adm(request, cliente_id):
     }
     return render(request, 'adm/dados_cliente_adm.html', context)
 
-def cadastro(request):
-    if request.method == 'POST':
-        nome = request.POST.get('nome')
-        email = request.POST.get('email')
-        telefone = request.POST.get('telefone')
-        data_nascimento = request.POST.get('data_nascimento')
-        endereco = request.POST.get('endereco')
-        cep = request.POST.get('cep')
-        cpf = request.POST.get('cpf')
+def confirmar_agendamento_adm(request):
+    print("Entrou na view confirmar_agendamento_adm")
+    print(f"Request method: {request.method}")
 
-        if not all([nome, email, telefone, data_nascimento, endereco, cep, cpf]):
-            messages.error(request, 'Preencha todos os campos.')
-            return render(request, 'html/cadastro.html')
+    if request.method == 'POST' and 'confirmar' in request.POST:
+        cliente_id = request.POST.get('cliente_id')
+        servico_id = request.POST.get('servico_id')
+        data = request.POST.get('data')
+        hora = request.POST.get('hora')
 
-        if Cliente.objects.filter(cpf=cpf).exists():
-            messages.error(request, 'CPF já cadastrado.')
-            return render(request, 'html/cadastro.html')
+        print(f"servico_id recebido (confirmar): {servico_id}")
 
-        Cliente.objects.create(
-            nome=nome,
-            email=email,
-            telefone=telefone,
-            data_nascimento=data_nascimento,
-            endereco=endereco,
-            cep=cep,
-            cpf=cpf
+        # Validar se IDs são válidos
+        if not (cliente_id and cliente_id.isdigit()) or not (servico_id and servico_id.isdigit()):
+            return HttpResponseBadRequest("ID do cliente ou serviço inválido")
+
+        # Buscar os objetos Cliente e Serviço
+        cliente = get_object_or_404(Cliente, id=int(cliente_id))
+        servico = get_object_or_404(Servico, id=int(servico_id))
+
+        # Criar agendamento
+        agendamento = Agendamento.objects.create(
+            cliente=cliente,
+            servico=servico,
+            data=data,
+            hora=hora,
+            status='confirmado'
         )
-        messages.success(request, 'Cadastro realizado com sucesso!')
-        return redirect('login')
 
-    return render(request, 'html/cadastro.html')
+        contexto = {
+            'agendamento': agendamento,
+            'mostrar_modal_sucesso': True,
+            'cliente': cliente,
+            'servico': servico,
+            'data': data,
+            'hora': hora,
+        }
+
+        return render(request, 'adm/confirmar_agendamento_adm.html', contexto)
+
+    elif request.method == 'POST':
+        cliente_id = request.POST.get('cliente_id')
+        servico_id = request.POST.get('servico_id')
+        data = request.POST.get('data')
+        hora = request.POST.get('hora')
+
+        print("servico_id recebido (confirmar_agendamento_adm):", servico_id)
+
+        if not servico_id or not servico_id.isdigit():
+            return HttpResponseBadRequest("ID do serviço inválido")
+
+        cliente = get_object_or_404(Cliente, id=cliente_id)
+        servico = get_object_or_404(Servico, id=int(servico_id))
+
+        contexto = {
+            'cliente': cliente,
+            'servico': servico,
+            'data': data,
+            'hora': hora,
+        }
+
+        return render(request, 'adm/confirmar_agendamento_adm.html', contexto)
+
+    elif request.method == 'GET':
+         cliente_id = request.GET.get('cliente_id')
+    servico_id = request.GET.get('servico_id')
+    data = request.GET.get('data')
+    hora = request.GET.get('hora')
+
+    if cliente_id and servico_id and data and hora:
+        cliente = get_object_or_404(Cliente, id=cliente_id)
+        servico = get_object_or_404(Servico, id=servico_id)
+
+        contexto = {
+            'cliente': cliente,
+            'servico': servico,
+            'data': data,
+            'hora': hora,
+        }
+
+        return render(request, 'adm/confirmar_agendamento_adm.html', contexto)
+
+    return redirect('pagina_inicial_adm')
+    
+
+def cancelar_agendamento(request, agendamento_id):
+    agendamento = get_object_or_404(Agendamento, id=agendamento_id)
+    agendamento.delete()
+    messages.success(request, 'Agendamento cancelado com sucesso.')
+
+    # Primeira prioridade: se tiver "next", redireciona pra ele
+    next_url = request.GET.get('next')
+    if next_url:
+        return redirect(next_url)
+
+    # Segunda prioridade: monta com periodo e data, se existirem
+    periodo = request.GET.get('periodo')
+    data = request.GET.get('data')
+
+    if periodo and data:
+        return redirect(f'/agenda_adm?periodo={periodo}&data={data}')
+    
+    # Fallback padrão
+    return redirect('/agenda_adm?periodo=dia')
+
+def remarcar_atendimento_adm(request, agendamento_id):
+    agendamento = get_object_or_404(Agendamento, id=agendamento_id)
+    servico = agendamento.servico
+    cliente = agendamento.cliente
+    duracao_servico = servico.duracao
+
+    data_str = request.GET.get('data')
+    data = None
+    horarios_disponiveis = []
+
+    if data_str:
+        data = datetime.strptime(data_str, '%Y-%m-%d').date()
+
+        weekday = data.weekday()
+        dia_semana = '0' if weekday == 6 else str(weekday + 1)
+
+        horarios = HorarioAtendimento.objects.filter(
+            dia_semana=dia_semana,
+            ativo=True
+        )
+
+        agendamentos_no_dia = Agendamento.objects.filter(data=data).exclude(id=agendamento.id)
+
+        for horario in horarios:
+            hora_atual = datetime.combine(data, horario.hora_inicio)
+            hora_fim = datetime.combine(data, horario.hora_fim)
+
+            while hora_atual + timedelta(minutes=duracao_servico) <= hora_fim:
+                # Remover horários que já passaram se for hoje
+                if data == datetime.today().date():
+                    if hora_atual.time() < datetime.now().time():
+                        hora_atual += timedelta(minutes=30)
+                        continue
+
+                sobreposto = False
+                for ag in agendamentos_no_dia:
+                    inicio_ag = datetime.combine(ag.data, ag.hora)
+                    fim_ag = inicio_ag + timedelta(minutes=ag.servico.duracao)
+                    fim_atual = hora_atual + timedelta(minutes=duracao_servico)
+
+                    if (hora_atual < fim_ag) and (fim_atual > inicio_ag):
+                        sobreposto = True
+                        break
+
+                if not sobreposto:
+                    horarios_disponiveis.append(hora_atual.time())
+
+                hora_atual += timedelta(minutes=30)
+
+    if request.method == 'POST':
+        nova_data = request.POST.get('data')
+        nova_hora = request.POST.get('hora')
+
+        if nova_data and nova_hora:
+            url_confirmar = reverse('confirmar_agendamento_adm') + f'?cliente_id={cliente.id}&servico_id={servico.id}&data={nova_data}&hora={nova_hora}'
+            return HttpResponseRedirect(url_confirmar)
+
+    context = {
+        'agendamento': agendamento,
+        'cliente': cliente,
+        'servico': servico,
+        'data': data,
+        'horarios_disponiveis': horarios_disponiveis,
+    }
+    return render(request, 'adm/remarcar_atendimento_adm.html', context)
+
+def fila_atendimento_adm(request):
+    hoje = timezone.localdate()
+    agora = timezone.localtime().time()
+
+    # 1. Pega os agendamentos do dia com status pendente ou confirmado
+    agendamentos_do_dia = Agendamento.objects.filter(
+        data=hoje,
+        status__in=['pendente', 'confirmado']
+    )
+
+    # 2. Atualiza para "pendente" os que já passaram do horário
+    for agendamento in agendamentos_do_dia:
+        if agendamento.status == 'confirmado' and agendamento.hora < agora:
+            agendamento.status = 'pendente'
+            agendamento.save()
+
+    # 3. Filtra somente os agendamentos ainda válidos para exibir na fila
+    fila = Agendamento.objects.filter(
+        data=hoje,
+        status__in=['pendente', 'confirmado'],
+        hora__gte=agora  # só exibe os que ainda não aconteceram
+    ).order_by('hora')
+
+    return render(request, 'adm/fila_atendimento_adm.html', {'fila': fila})
+
+
+@require_POST
+def finalizar_agendamento(request, agendamento_id):
+    agendamento = get_object_or_404(Agendamento, id=agendamento_id)
+    agendamento.status = 'finalizado'
+    agendamento.save()
+    messages.success(request, 'Agendamento finalizado com sucesso.')
+    return redirect('fila_atendimento_adm')  
+
+@login_required
+def perfil_adm(request):
+   return render(request, 'adm/perfil_adm.html', {
+        'user': request.user
+    })
+

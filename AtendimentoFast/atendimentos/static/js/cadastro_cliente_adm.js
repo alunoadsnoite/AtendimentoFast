@@ -85,3 +85,23 @@ window.onload = function() {
 
   // Remove o parâmetro 'novo' da URL
   window.history.replaceState({}, document.title, removeURLParameter(window.location.href, 'novo'));
+
+document.addEventListener('DOMContentLoaded', function () {
+  const modal = document.getElementById('modalCpfExistente');
+
+  if (modal) {
+    // Fecha o modal ao clicar fora do conteúdo
+    modal.addEventListener('click', function (e) {
+      if (e.target === modal) {
+        modal.style.display = 'none';
+      }
+    });
+
+    // Fecha com tecla Esc
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') {
+        modal.style.display = 'none';
+      }
+    });
+  }
+});

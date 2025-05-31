@@ -21,7 +21,6 @@
       <a href="{% url 'horario_atendimento' %}">Horário de atendimento</a>
       <a href="{% url 'agenda_adm' %}">Agenda de atendimento</a>
       <a href="{% url 'buscar_cliente' %}">Buscar cliente</a>
-      <a href="{% url 'encaixa_fila_adm' %}">Encaixar na fila</a>
       <a href="{% url 'perfil_adm' %}">Perfil</a>
       <a href="{% url 'inicio' %}">Sair</a>
     </nav>
@@ -29,12 +28,16 @@
 
   <main class="container-cadastro">
 
-    {% if messages %}
-    <ul class="messages">
-    {% for message in messages %}
-    <li class="{{ message.tags }}">{{ message }}</li>
-    {% endfor %}
-   </ul>
+   {% if cpf_existente %}
+<div class="modal" id="modalCpfExistente" style="display: block;">
+  <div class="modal-conteudo">
+    <p>Já existe um cliente cadastrado com este CPF.</p>
+    <div class="modal-botoes">
+      <a href="{% url 'buscar_cliente' %}" class="btn">Buscar Cliente</a>
+      <a href="{% url 'cadastrar_cliente_adm' %}" class="btn">Voltar</a>
+    </div>
+  </div>
+</div>
 {% endif %}
 
     <h1 class="titulo">Cadastrar cliente</h1>

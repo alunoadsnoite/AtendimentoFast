@@ -90,6 +90,7 @@ class Agendamento(models.Model):
     STATUS_CHOICES = [
         ('pendente', 'Pendente'),
         ('confirmado', 'Confirmado'),
+        ('em_espera', 'Em espera'),
         ('cancelado', 'Cancelado'),
         ('finalizado', 'Finalizado'),
     ]
@@ -101,4 +102,4 @@ class Agendamento(models.Model):
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pendente')
 
     def __str__(self):
-        return f"{self.servico.nome} em {self.data} às {self.hora} para {self.cliente.nome}"
+        return f"{self.servico.nome} em {self.data} às {self.hora} para {self.cliente.nome_completo}"

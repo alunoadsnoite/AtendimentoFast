@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Usuario, Cliente, Servico
+from .models import Usuario, Cliente, Servico, Agendamento
 from .models import HorarioAtendimento
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 
@@ -26,6 +26,13 @@ class HorarioAtendimentoAdmin(admin.ModelAdmin):
     list_display = ('dia_semana', 'hora_inicio', 'hora_fim', 'ativo')
     list_filter = ('dia_semana', 'ativo')
     ordering = ('dia_semana', 'hora_inicio')
+
+
+@admin.register(Agendamento)
+class AgendamentoAdmin(admin.ModelAdmin):
+    list_display = ('cliente', 'servico', 'data', 'hora', 'status')
+    list_filter = ('status', 'data')
+    search_fields = ('cliente_nome_completo', 'servico_nome')
 
 admin.site.register(Usuario, UsuarioAdmin)
 admin.site.register(Cliente)

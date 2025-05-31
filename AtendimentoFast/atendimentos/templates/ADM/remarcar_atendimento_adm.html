@@ -20,42 +20,63 @@
       <a href="{% url 'horario_atendimento' %}">Horário de atendimento</a>
       <a href="{% url 'agenda_adm' %}">Agenda de atendimento</a>
       <a href="{% url 'buscar_cliente' %}">Buscar cliente</a>
-      <a href="{% url 'encaixa_fila_adm' %}">Encaixar na fila</a>
       <a href="{% url 'perfil_adm' %}">Perfil</a>
       <a href="{% url 'inicio' %}">Sair</a>
     </nav>
   </aside>
 
   <main class="conteudo-principal">
-    <header class="cabecalho">
-      <h1>Remarcar atendimento</h1>
-      <p>Escolha a nova data e horário desejado, para o cliente</p>
-    </header>
+  <header class="cabecalho">
+    <h1>Remarcar atendimento</h1>
+    <p>Escolha a nova data e horário desejado, para o cliente</p>
+  </header>
 
-    <section class="agendamento">
-      <div class="dados-cliente">
-         <p><strong>Cliente</strong> </p>
-        <p><strong>E-mail </strong> nome_cliente@email.com</p>
-        <p><strong>Telefone </strong> (00) 90000-0000</p>
-      </div>
+  <section class="agendamento">
+    <div class="dados-cliente">
+      <p><strong>Cliente</strong> {{ cliente.nome_completo}}</p>
+      <p><strong>E-mail</strong> {{ cliente.email }}</p>
+      <p><strong>Telefone</strong> {{ cliente.telefone }}</p>
+    </div>
 
-      <label for="servico">Serviço escolhido:</label>
-      <input type="text" id="servico" value="Corte de cabelo" disabled />
+    <label for="servico">Serviço escolhido:</label>
+    <input type="text" id="servico" value="{{ servico.nome }}" disabled />
 
-      <label for="data">Escolha a nova data:</label>
-      <input type="date" id="data" name="data" />
+    
 
-      <label>Escolha o novo horário:</label>
-      <div class="horarios-container" id="horarios">
-        <!-- horários disponíveis aparecerão aqui -->
-      </div>
+    <form method="get">
+     <label for="data">Escolha a nova data:</label>
+    <input type="date" id="data" name="data" 
+     value="{% if data %}{{ data|date:'Y-m-d' }}{% endif %}" 
+      required onchange="this.form.submit();" />
+    </form>
 
-      <div class="container-botao">
-        <a href="{% url 'confirmar_remarcacao' %}" class="botao" id="btnRemarcar">Remarcar atendimento</a>
-        <a href="{% url 'agendamentos_cliente' %}" class="botao cinza" id="btnCancelar">Cancelar</a>
-      </div>
-    </section>
-  </main>
+<form method="post">
+  {% csrf_token %}
+  <input type="hidden" name="data" value="{% if data %}{{ data|date:'Y-m-d' }}{% endif %}">
+
+  <label>Escolha o novo horário:</label>
+
+  {% if horarios_disponiveis %}
+    <div class="horarios-container">
+      {% for horario in horarios_disponiveis %}
+        <label class="btn-horario">
+          <input type="radio" name="hora" value="{{ horario }}" required>
+          <span>{{ horario|date:'H:i' }}</span>
+        </label>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p>Não há horários disponíveis para esta data.</p>
+  {% endif %}
+
+  <button type="submit" class="botao">Remarcar atendimento</button>
+  <a href="{% url 'agendamentos_cliente' %}" class="botao cinza">Cancelar</a>
+</form>
+  </section>
+</main>
+
+
+  
   <style>
     
     * {
@@ -185,7 +206,7 @@
       cursor: not-allowed;
     }
 
-    .horarios-container {
+     .horarios-container {
       display: flex;
       flex-wrap: wrap;
       gap: 10px;
@@ -217,6 +238,43 @@
       background: #327c66;
       font-weight: bold;
     }
+
+    .botoes-horarios {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px; /* espaçamento entre botões */
+  margin-top: 10px;
+}
+
+.btn-horario {
+  display: inline-block;
+  width: 60px;
+  margin: 4px;
+  cursor: pointer;
+  user-select: none;
+  font-family: monospace;
+}
+
+.btn-horario input[type="radio"] {
+  display: none;
+}
+
+.btn-horario span {
+  display: block;
+  padding: 8px 0;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  text-align: center;
+  background-color: #fff;
+  color: #000;
+}
+
+.btn-horario input[type="radio"]:checked + span {
+  background-color: #1E392A;
+  color: #ffffff;
+  border-color: #000;
+}
+
 
     .botao {
       display: inline-block;
@@ -296,5 +354,8 @@
       }
     }
   </style>
+
+  <script src="{% static 'js/data_minima.js' %}"></script>
+
 </body>
 </html>

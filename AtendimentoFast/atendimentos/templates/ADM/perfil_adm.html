@@ -9,32 +9,42 @@
 
 </head>
 <body>
-  <aside class="menu-lateral">
-    <a href="{% url 'pagina_inicial_cliente' %}" class="logo">AtendimentoFast</a>
-    <nav class="sidebar">
-        <ul>
-          <li><a href="#">Perfil</a></li>
-          <li><a href="#">Agendar</a></li>
-          <li><a href="#">Remarcar</a></li>
-          <li><a href="#">Ver cliente</a></li>
-          <li><a href="#">Serviços</a></li>
-          <li><a href="#">Fila de espera</a></li>
-          <li><a href="#">Cadastrar serviço</a></li>
-          <li><a href="#">Encaixar na fila</a></li>
-          <li><a href="#">Sair</a></li>
-        </ul>
-      </nav>
+
+    <aside class="menu-lateral">
+    <a href="{% url 'pagina_inicial_adm' %}" class="logo">AtendimentoFast</a>
+    <nav>
+      <a href="{% url 'verificar_cadastro' %}">Agendar atendimento</a>
+      <a href="{% url 'cadastrar_cliente_adm' %}">Cadastrar cliente</a>
+      <a href="{% url 'fila_atendimento_adm' %}">Fila de espera</a>
+      <a href="{% url 'cadastrar_servicos_adm' %}">Cadastrar serviços</a>
+      <a href="{% url 'servicos_cadastrado' %}">Serviços</a>
+      <a href="{% url 'horario_atendimento' %}">Horário de atendimento</a>
+      <a href="{% url 'agenda_adm' %}">Agenda de atendimento</a>
+      <a href="{% url 'buscar_cliente' %}">Buscar cliente</a>
+      <a href="{% url 'perfil_adm' %}" class="ativo">Perfil</a>
+      <a href="{% url 'inicio' %}">Sair</a>
+    </nav>
   </aside>
+
 
   <main class="conteudo">
     <h1 class="titulo">Meu Perfil</h1>
 
+    <h1>Lista de Usuários</h1>
+<ul>
+  {% for user in usuarios %}
+    <li>{{ user.username }} - {{ user.email }}</li>
+  {% empty %}
+    <li>Nenhum usuário encontrado.</li>
+  {% endfor %}
+</ul>
+   
     <section class="perfil-box">
-      <p class="campo">Nome completo</p>
-      <p class="campo">(00) 90000-0000</p>
-      <p class="campo">emaildocliente@gmail.com</p>
-      <p class="campo">**** <span class="ver-senha" onclick="abrirModal()">Visualizar senha</span></p>
-      <p id="senhaReal" class="campo" style="display: none;">senha1234</p>  
+      <p class="campo">{{ user.nome_completo }}</p>
+      <p class="campo">{{ user.telefone }}</p>
+      <p class="campo">{{ user.email }}</p>
+      <p class="campo">** <span class="ver-senha" onclick="abrirModal()">Visualizar senha</span></p>
+      <p id="senhaReal" class="campo" style="display: none;">{{ user.senha }}</p>  
     </section>
 
     <div class="botoes">
@@ -72,10 +82,11 @@ body {
   background: linear-gradient(to right, #A1D8B5 0%, #B0B0B0 50%, #A1D8B5 100%);
 }
 
-.menu-lateral {
+ /* Menu lateral fixo */
+    .menu-lateral {
   background: #ffffff;
   width: 220px;
-  padding: 30px 20px;
+  padding: 20px 15px;
   box-shadow: 4px 0 10px rgba(0,0,0,0.1);
   display: flex;
   flex-direction: column;
@@ -86,23 +97,23 @@ body {
 }
 
 .menu-lateral .logo {
-  font-size: 20px;
+  font-size: 18px;
   color: #1E392A;
-  margin-bottom: 40px;
+  margin-bottom: 20px;
   font-weight: 700;
-  user-select: none;
   text-decoration: none;
 }
 
 .menu-lateral nav a {
   display: block;
   color: #1E392A;
-  padding: 12px;
-  border-radius: 8px;
-  margin-bottom: 10px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  margin-bottom: 6px;
   text-decoration: none;
+  font-weight: 500;
+  font-size: 14px;
   transition: 0.3s;
-  font-weight: 600;
 }
 
 .menu-lateral nav a:hover,

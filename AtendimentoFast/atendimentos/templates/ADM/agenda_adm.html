@@ -1,3 +1,8 @@
+{% load static %}
+{% load i18n %}
+{% load custom_filters %}
+{% load tz %}
+{% load igual_data %}
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -26,71 +31,186 @@
 
   <h1>Agenda de Atendimento</h1>
 
-  <div class="filtros">
-    <label for="periodo">Selecione o período:</label>
-    <select id="periodo">
-      <option>Dia</option>
-      <option>Semana</option>
-      <option>Mês</option>
-    </select>
+ <div class="filtros">
+  <label for="periodo">Selecione o período:</label>
+  <select id="periodo" name="periodo" onchange="window.location.href='?periodo=' + this.value.toLowerCase()">
+    <option value="dia" {% if periodo_selecionado == 'dia' %}selected{% endif %}>Dia</option>
+    <option value="semana" {% if periodo_selecionado == 'semana' %}selected{% endif %}>Semana</option>
+    <option value="mes" {% if periodo_selecionado == 'mes' %}selected{% endif %}>Mês</option>
+  </select>
+</div>
+
+<div class="navegacao-periodo">
+  {% if periodo_selecionado != 'dia' %}
+    <a href="?periodo={{ periodo_selecionado }}&{% if periodo_selecionado == 'semana' %}semana={{ semana_anterior }}{% elif periodo_selecionado == 'mes' %}mes={{ mes_anterior }}{% endif %}" class="botao-navegacao"><</a>
+  {% endif %}
+
+  <div class="data-periodo">
+    {% if periodo_selecionado == 'semana' %}
+      {{ dias_da_semana.0|date:"d/m" }} - {{ dias_da_semana.6|date:"d/m" }}
+    {% elif periodo_selecionado == 'mes' %}
+      {{ hoje|date:"F Y" }}
+    {% else %}
+      <!-- Nada exibido para 'dia' -->
+    {% endif %}
   </div>
 
-  <!-- Exibição por dia -->
+  {% if periodo_selecionado != 'dia' %}
+    <a href="?periodo={{ periodo_selecionado }}&{% if periodo_selecionado == 'semana' %}semana={{ semana_proxima }}{% elif periodo_selecionado == 'mes' %}mes={{ mes_posterior }}{% endif %}" class="botao-navegacao">></a>
+  {% endif %}
+</div>
+
+{% if periodo_selecionado == 'dia' %}
+  <form method="get" action="">
+    <input type="hidden" name="periodo" value="dia" />
+    <label class="dia" for="data">Selecione o dia:</label>
+    <input type="date" id="data" name="data" value="{{ data_selecionada|date:'Y-m-d' }}" />
+    <button type="submit">Filtrar</button>
+  </form>
+
   <div class="agenda-dia">
-    <p class="info-dia">Dia 26/06/2025 - Quarta-feira</p>
-    <div class="card-agendamento">
-      <p><strong>Cliente:</strong> Maria Silva</p>
-      <p><strong>Serviço:</strong> Corte de cabelo</p>
-      <p><strong>Horário:</strong> 10:00 - 10:30</p>
-      <div class="botoes-card">
-        <button class="btn-cancelar">Cancelar</button>
-        <button class="btn-remarcar">Remarcar</button>
-      </div>
-    </div>
-    <!-- Outros cards aqui -->
-  </div>
+    <p class="info-dia">
+      Dia {{ data_selecionada|date:"d/m/Y" }} - {{ data_selecionada|date:"l" }}
+    </p>
 
-  <!-- Exibição por semana -->
-  <div class="agenda-semana" style="display:none">
-    <table>
-      <thead>
-        <tr>
-          <th>Domingo</th>
-          <th>Segunda</th>
-          <th>Terça</th>
-          <th>Quarta</th>
-          <th>Quinta</th>
-          <th>Sexta</th>
-          <th>Sábado</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><div class="mini-card">Maria - 10:00</div></td>
-          <td><div class="mini-card">Carlos - 11:00</div></td>
-          <td></td>
-          <td><div class="mini-card">Ana - 09:30</div></td>
-          <td></td>
-          <td><div class="mini-card">João - 14:00</div></td>
-          <td></td>
-        </tr>
-      </tbody>
+  {% for agendamento in agendamentos %}
+  <div class="card-agendamento">
+    <p><strong>Cliente:</strong> {{ agendamento.cliente.nome_completo }}</p>
+    <p><strong>Serviço:</strong> {{ agendamento.servico.nome }}</p>
+    <p><strong>Horário:</strong> {{ agendamento.hora|time:"H:i" }}</p>
+
+    {% if agendamento.data >= hoje %}
+      <div class="botoes-card">
+      <a href="#" class="btn-cancelar" data-id="{{ agendamento.id }}">Cancelar</a>
+      <a href="{% url 'remarcar_atendimento_adm' agendamento.id %}" class="btn-remarcar">Remarcar</a>
+      </div>
+    {% endif %}
+  </div>
+{% empty %}
+  <p>Não há agendamentos para este dia.</p>
+{% endfor %}
+
+{% elif periodo_selecionado == 'semana' %}
+
+
+  <div class="agenda-semana">
+    <table class="tabela-semana">
+      <tr>
+        {% for dia in dias_da_semana %}
+          <td>
+            {% localtime on %}
+            <strong>{{ dia|date:"l" }} - {{ dia|date:"d/m" }}</strong><br>
+            {% endlocaltime %}
+            {% with agendamentos_por_dia|dict_get:dia as agendamentos_do_dia %}
+              {% if agendamentos_do_dia %}
+               {% for agendamento in agendamentos_do_dia %}
+               {% if agendamento.data >= hoje %}
+               <div class="mini-card" onclick="abrirModal('{{ agendamento.id }}')" style="cursor:pointer;">
+               {{ agendamento.cliente.nome_completo }} - {{ agendamento.servico.nome }} - {{ agendamento.hora|time:"H:i" }}
+               </div>
+               {% else %}
+    <div class="mini-card">
+      {{ agendamento.cliente.nome_completo }} - {{ agendamento.servico.nome }} - {{ agendamento.hora|time:"H:i" }}
+    </div>
+  {% endif %}
+{% endfor %}
+              {% else %}
+                <div class="mini-card">Nenhum</div>
+              {% endif %}
+            {% endwith %}
+          </td>
+        {% endfor %}
+      </tr>
     </table>
   </div>
 
-  <!-- Exibição por mês -->
-  <div class="agenda-mes" style="display:none">
-    <div class="dia-mes">
-      <strong>01</strong>
-      <div class="evento-dia">Maria - 09:00</div>
-    </div>
-    <div class="dia-mes">
-      <strong>02</strong>
-      <div class="evento-dia">Carlos - 10:30</div>
-    </div>
-    <div class="dia-mes"><strong>03</strong></div>
-    <!-- Mais dias -->
+{% elif periodo_selecionado == 'mes' %}
+  <div class="agenda-mes">
+    {% for dia in dias_do_mes %}
+      <div class="dia-mes">
+        <strong>{{ dia.day }}</strong>
+
+        {% for agendamento in agendamentos %}
+          {% if agendamento.data|igual_data:dia %}
+            {% if agendamento.data >= hoje %}
+              <!-- Agendamento futuro ou hoje - card clicável -->
+              <div class="evento-dia"
+                   onclick="abrirModalMes('{{ agendamento.id }}')"
+                   data-id="{{ agendamento.id }}"
+                   data-cliente="{{ agendamento.cliente.nome_completo }}"
+                   data-servico="{{ agendamento.servico.nome }}"
+                   data-horario="{{ agendamento.hora|time:'H:i' }}" style="cursor:pointer;">
+                {{ agendamento.cliente.nome_completo }} - {{ agendamento.servico.nome }} - {{ agendamento.hora|time:"H:i" }}
+              </div>
+            {% else %}
+              
+              <div class="evento-dia" style="opacity: 0.6; cursor: default;">
+                {{ agendamento.cliente.nome_completo }} - {{ agendamento.servico.nome }} - {{ agendamento.hora|time:"H:i" }}
+              </div>
+            {% endif %}
+          {% endif %}
+        {% endfor %}
+
+      </div>
+    {% endfor %}
   </div>
+{% endif %}
+
+
+<!-- Modal de confirmação -->
+<div id="modalCancelar" class="modal">
+  <div class="modal-conteudo">
+    <p>Tem certeza que deseja cancelar o agendamento?</p>
+    <div style="text-align: right;">
+      <button id="fecharModalBtn">Não</button>
+      <button id="confirmarCancelarBtn">Sim</button>
+    </div>
+  </div>
+</div>
+
+<!--Modal da semana-->
+<div id="modalDetalheAgendamento" class="modal" style="display:none;">
+  <div class="modal-conteudo">
+    <h3>Detalhes do Agendamento</h3>
+    <p><strong>Cliente:</strong> <span id="modalCliente"></span></p>
+    <p><strong>Serviço:</strong> <span id="modalServico"></span></p>
+    <p><strong>Horário:</strong> <span id="modalHorario"></span></p>
+
+    <div>
+      <button id="btnRemarcar" class="btn-acao" style="background:#1A3C1A; color:#fff; border:none; padding:10px 15px; border-radius:5px; cursor:pointer;">Remarcar</button>
+      <button id="btnCancelar" class="btn-acao" style="background:#f44336; color:#fff; border:none; padding:10px 15px; border-radius:5px; cursor:pointer;">Cancelar</button>
+    </div>
+    <button id="btnFecharDetalhe">Fechar</button>
+  </div>
+</div>
+
+<!-- Modal da Semana -->
+<div id="modalCancelarSemana" class="modal">
+  <div class="modal-conteudo">
+    <p>Tem certeza que deseja cancelar o agendamento?</p>
+    <div style="text-align: right;">
+      <button id="fecharModalSemanaBtn">Não</button>
+      <button id="confirmarCancelarSemanaBtn">Sim</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal da Visualização Mensal -->
+<div id="modalDetalheAgendamentoMes" class="modal">
+  <div class="modal-conteudo">
+    <h3>Detalhes do Agendamento</h3>
+    <p><strong>Cliente:</strong> <span id="modalClienteMes"></span></p>
+    <p><strong>Serviço:</strong> <span id="modalServicoMes"></span></p>
+    <p><strong>Horário:</strong> <span id="modalHorarioMes"></span></p>
+    
+    <div style="text-align: right; margin-top: 15px;">
+      <button id="btnCancelarMes">Cancelar</button>
+      <button id="btnRemarcarMes">Remarcar</button>
+      <button id="btnFecharDetalheMes">Fechar</button>
+    </div>
+  </div>
+</div>
+
 
     <style>
     body {
@@ -147,6 +267,36 @@
       color: #ffffff;
     }
 
+    /* Navegação entre períodos: mês e semana */
+.navegacao-periodo {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 300px;
+    margin: 20px auto;
+    gap: 10px;
+}
+
+.botao-navegacao {
+    background: none;
+    border: none;
+    font-size: 1.8rem;
+    cursor: pointer;
+    color: #333;
+    transition: color 0.2s ease;
+}
+
+.botao-navegacao:hover {
+    color: #007BFF;
+}
+
+.data-periodo {
+    font-size: 1.1rem;
+    font-weight: 500;
+    text-align: center;
+    flex-grow: 1;
+}
+
     .filtros {
       text-align: center;
       margin-bottom: 30px;
@@ -185,6 +335,27 @@
       box-shadow: 0 4px 10px rgba(0,0,0,0.05);
       transition: transform 0.2s ease;
     }
+
+    .dia {
+      margin-left: 100px;
+      font-weight: 600;
+      font-size: 16px;
+      font-family: poppins;
+    }
+
+    form button[type="submit"] {
+  border-radius: 50px;
+  padding: 10px 20px; 
+  border: none; 
+  background-color: #1A3C1A; 
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+form button[type="submit"]:hover {
+  background-color: #145214; /* cor no hover */
+}
 
     .card-agendamento:hover {
       transform: scale(1.01);
@@ -225,12 +396,12 @@
     }
 
     .btn-remarcar {
-      background: #2ecc71;
+      background: #1E392A;
       color: white;
     }
 
     .btn-remarcar:hover {
-      background: #27ae60;
+      background: #1A3C1A;
     }
 
     .agenda-semana table {
@@ -284,6 +455,27 @@
       text-overflow: ellipsis;
     }
 
+   .modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.5);
+  display: none; /* começa escondido */
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-conteudo {
+  background: white;
+  padding: 20px;
+  border-radius: 6px;
+  max-width: 400px;
+  width: 90%;
+  text-align: center;
+}
+
     @media (max-width: 768px) {
       body {
         padding-left: 0;
@@ -314,7 +506,40 @@
         align-items: flex-end;
       }
     }
+
+    
+@media (max-width: 500px) {
+    .data-periodo {
+        font-size: 1rem;
+    }
+
+    .botao-navegacao {
+        font-size: 1.5rem;
+    }
+}
+
   </style>
+
+
+  <script src="{% static 'js/agenda_adm.js' %}"></script>
+
+  <script>
+  const agendamentosSemana = {
+    {% for dia in dias_da_semana %}
+      {% with agendamentos_por_dia|dict_get:dia as agendamentos_do_dia %}
+        {% if agendamentos_do_dia %}
+          {% for agendamento in agendamentos_do_dia %}
+            {{ agendamento.id }}: {
+              cliente: "{{ agendamento.cliente.nome_completo|escapejs }}",
+              servico: "{{ agendamento.servico.nome|escapejs }}",
+              horario: "{{ agendamento.hora|time:'H:i' }}"
+            },
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+    {% endfor %}
+  };
+</script>
 
 </body>
 </html>

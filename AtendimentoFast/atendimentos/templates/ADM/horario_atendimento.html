@@ -17,10 +17,9 @@
       <a href="{% url 'fila_atendimento_adm' %}">Fila de espera</a>
       <a href="{% url 'cadastrar_servicos_adm' %}">Cadastrar serviços</a>
       <a href="{% url 'servicos_cadastrado' %}">Serviços</a>
-      <a href="{% url 'horario_atendimento' %}">Horário de atendimento</a>
+      <a href="{% url 'horario_atendimento' %}" class="ativo">Horário de atendimento</a>
       <a href="{% url 'agenda_adm' %}">Agenda de atendimento</a>
       <a href="{% url 'buscar_cliente' %}">Buscar cliente</a>
-      <a href="{% url 'encaixa_fila_adm' %}">Encaixar na fila</a>
       <a href="{% url 'perfil_adm' %}">Perfil</a>
       <a href="{% url 'inicio' %}">Sair</a>
     </nav>
@@ -43,21 +42,21 @@
     <h3>{{ dia.dia_semana_nome }}<br><small>{{ dia.data }}</small></h3>
     
     <label>
-      <input type="checkbox" name="ativo_{{ forloop.counter0 }}" checked>
+      <input type="checkbox" name="ativo_{{ forloop.counter0 }}" {% if dia.ativo %}checked{% endif %}>
       Ativo
     </label>
 
-   <div class="horarios-container" id="horarios_{{ forloop.counter0 }}">
+  <div class="horarios-container" id="horarios_{{ forloop.counter0 }}">
   {% for hora in dia.horarios %}
-    <div class="horario-bloco">
+  <div class="horario-bloco">
   <span class="horario-brackets">[</span>
-  <input type="time" name="inicio_0_0" value="08:00">
+  <input type="time" name="inicio_{{ forloop.parentloop.counter0 }}_{{ forloop.counter0 }}" value="{{ hora.inicio }}">
   <span class="horario-brackets">]</span>
   
   <span class="horario-separador">às</span> <!-- ou pode ser "-" -->
   
   <span class="horario-brackets">[</span>
-  <input type="time" name="fim_0_0" value="17:00">
+  <input type="time" name="fim_{{ forloop.parentloop.counter0 }}_{{ forloop.counter0 }}" value="{{ hora.fim }}">
   <span class="horario-brackets">]</span>
   
   <button type="button" onclick="removerHorario(this)">×</button>
@@ -70,7 +69,8 @@
   {% endfor %}
 </div>
 
-<button id="btn-salvar" type="submit" style="display:none;">Salvar</button>
+<button id="btn-salvar" type="submit">Salvar</button>
+</form>
 
   <style>
    

@@ -20,40 +20,48 @@
       <a href="{% url 'horario_atendimento' %}">Horário de atendimento</a>
       <a href="{% url 'agenda_adm' %}">Agenda de atendimento</a>
       <a href="{% url 'buscar_cliente' %}">Buscar cliente</a>
-      <a href="{% url 'encaixa_fila_adm' %}">Encaixar na fila</a>
       <a href="{% url 'perfil_adm' %}">Perfil</a>
       <a href="{% url 'inicio' %}">Sair</a>
     </nav>
   </aside>
 
 
-  <div class="conteudo">
-    <h1>Fila de Atendimento</h1>
+<div class="conteudo">
+  <h1>Fila de Atendimento</h1>
 
-    <div class="card-fila" data-cliente-id="1">
-  <span class="nome-cliente">João Silva</span>
-  <div class="acoes">
-    <button class="botao-pequeno cancelar" data-acao="cancelar">Cancelar</button>
-    <button class="botao-pequeno remarcar" data-acao="remarcar">Remarcar</button>
-    <button class="botao-pequeno finalizar" data-acao="finalizar">Finalizar</button>
-  </div>
+  {% for agendamento in fila %}
+    <div class="card-fila" data-agendamento-id="{{ agendamento.id }}">
+      <span class="nome-cliente">{{ agendamento.cliente.nome_completo }}</span>
+      <span class="servico">{{ agendamento.servico.nome }}</span>
+      <span class="horario">{{ agendamento.hora }}</span>
+      <span class="status">{{ agendamento.get_status_display }}</span>
+      <div class="acoes">
+        <form method="post" action="{% url 'finalizar_agendamento' agendamento.id %}" style="display:inline;">
+          {% csrf_token %}
+          <button type="submit" class="botao-pequeno finalizar" data-acao="finalizar">Finalizar</button>
+        </form>
+        <a href="{% url 'remarcar_atendimento_adm' agendamento.id %}"><button class="botao-pequeno remarcar" data-acao="remarcar">Remarcar</button></a>
+        <button class="botao-pequeno cancelar" onclick="abrirModal({{ agendamento.id }})">Cancelar</button>
+      </div>
+    </div>
+  {% empty %}
+    <p>Nenhum cliente na fila.</p>
+  {% endfor %}
 </div>
 
-    {% for cliente in fila %}
-      <div class="card-fila" data-cliente-id="{{ cliente.id }}">
-        <span class="nome-cliente">
-          {{ cliente.nome }}
-        </span>
-        <div class="acoes">
-          <button class="botao-pequeno cancelar" data-acao="cancelar">Cancelar</button>
-          <button class="botao-pequeno remarcar" data-acao="remarcar">Remarcar</button>
-          <button class="botao-pequeno finalizar" data-acao="finalizar">Finalizar</button>
-        </div>
-      </div>
-    {% empty %}
-      <p>Nenhum cliente na fila.</p>
-    {% endfor %}
+<!-- Modal de Confirmação cancelamento -->
+<div id="modal-cancelar" class="modal">
+  <div class="modal-conteudo">
+    <p>Tem certeza que deseja cancelar este agendamento?</p>
+    <div class="botoes-modal">
+      <form id="form-cancelar" method="post" style="display:inline;">
+        {% csrf_token %}
+        <button type="submit" class="botao-confirmar">Sim</button>
+      </form>
+      <button onclick="fecharModal()" class="botao-cancelar">Não</button>
+    </div>
   </div>
+</div>
 
   <style>
     body {
@@ -165,6 +173,54 @@
       background-color: #1e7e34;
     }
 
+    .modal {
+  display: none;
+  position: fixed;
+  z-index: 999;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.4);
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-conteudo {
+  background-color: #fff;
+  padding: 30px;
+  border-radius: 10px;
+  text-align: center;
+  width: 300px;
+  box-shadow: 0 0 20px rgba(0,0,0,0.2);
+}
+
+.botoes-modal {
+  margin-top: 20px;
+  display: flex;
+  justify-content: space-around;
+}
+
+.botao-confirmar {
+  background-color: #d9534f;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 30px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.botao-cancelar {
+  background-color: #6c757d;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 30px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
     @media (max-width: 768px) {
       .menu-lateral {
         position: relative;
@@ -188,6 +244,7 @@
       }
     }
   </style>
+<script src="{% static 'js/fila_atendimento.js' %}"></script>
 
 </body>
 </html>

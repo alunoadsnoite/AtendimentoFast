@@ -5,7 +5,7 @@ from .views import cadastrar_cliente_adm
 urlpatterns = [
     path('', views.inicio_view, name='inicio'),
     path('login/', views.login_view, name='login'),
-    path('cadastro/', views.cadastro, name='cadastro'),
+    path('cadastro/', views.cadastro_view, name='cadastro'),
     path('pagina_inicial_cliente/', views.pagina_inicial_cliente, name='pagina_inicial_cliente'),
     path('pagina_inicial_adm/', views.pagina_inicial_adm, name='pagina_inicial_adm'),
     path('menu_adm/', views.menu_adm, name='menu_adm'),
@@ -27,20 +27,16 @@ urlpatterns = [
     path('salvar_horarios/', views.salvar_horarios, name='salvar_horarios'),
     path('pagina_inicial_adm', views.pagina_inicial_adm, name='pagina_inicial_adm'),
     path('perfil_adm', views.perfil_adm, name='perfil_adm'),
-    path('remarcar_atendimento_adm', views.remarcar_atendimento_adm, name='remarcar_atendimento_adm'),
     path('servicos_cadastrado', views.listar_servicos, name='servicos_cadastrado'),
-    path('agenda_adm', views.servicos_cadastrado, name='agenda_adm'),
+    path('agenda_adm', views.agenda_adm, name='agenda_adm'),
     path('agendar-atendimento/<int:cliente_id>/', views.agendar_atendimento_adm, name='agendar_atendimento_adm'),
     path('verificar_cadastro', views.verificar_cadastro, name='verificar_cadastro'),
-    path('confirmar_agendamento_adm', views.confirmar_agendamento_adm, name='confirmar_agendamento_adm'),
+    path('confirmar_agendamento_adm/', views.confirmar_agendamento_adm, name='confirmar_agendamento_adm'),
     path('dados_cliente_adm/<int:cliente_id>/', views.dados_cliente_adm, name='dados_cliente_adm'),
     path('servico/<int:id>/editar/', views.editar_servico, name='editar_servico'),
     path('servico/<int:id>/excluir/', views.excluir_servico, name='excluir_servico'),
+    path('cancelar_agendamento/<int:agendamento_id>/', views.cancelar_agendamento, name='cancelar_agendamento'),
+    path('remarcar_atendimento_adm/<int:agendamento_id>/', views.remarcar_atendimento_adm, name='remarcar_atendimento_adm'),
+    path('agendamento/<int:agendamento_id>/finalizar/',views.finalizar_agendamento, name='finalizar_agendamento'),
+    path('login/', views.login_view, name='login')
 ]
-
-
-
-
-
-
-
